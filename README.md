@@ -1,4 +1,4 @@
-# BUB-7: Temple Escape
+# Underwater World
 
 A compact 2D underwater action-platformer built with Godot for CSCI 5499B/5999B Project 1.
 
