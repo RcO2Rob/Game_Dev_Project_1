@@ -1,10 +1,12 @@
-# Underwater - CSCI 5499B/5999B Project 1
+# BUB-7: Temple Escape
 
-A 2D underwater game prototype built with Godot for Project 1.
+A compact 2D underwater action-platformer built with Godot for CSCI 5499B/5999B Project 1.
 
 ## Project status
 
-Initial repository setup. Game design and implementation are in progress.
+The three-stage game design is locked. The first playable movement prototype is the next milestone.
+
+See [the game design document](docs/GAME_DESIGN.md) for controls, rules, level progression, technical choices, and the iteration log.
 
 ## Development
 
@@ -17,4 +19,3 @@ The final GitHub release will include builds for:
 - Windows x86
 - macOS
 - Linux x86
-
