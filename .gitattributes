@@ -1,0 +1,21 @@
+# Keep text files consistent across Windows, macOS, and Linux.
+* text=auto eol=lf
+
+# Godot scenes and resources are text and should produce readable diffs.
+*.gd text eol=lf
+*.godot text eol=lf
+*.tscn text eol=lf
+*.tres text eol=lf
+*.cfg text eol=lf
+
+# Binary game assets should never receive text conversion.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ogg binary
+*.wav binary
+*.mp3 binary
+*.ttf binary
+*.otf binary
+

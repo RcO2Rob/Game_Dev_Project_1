@@ -1,0 +1,17 @@
+# Godot-generated cache and imported resources
+.godot/
+.import/
+
+# Local export output
+builds/
+exports/
+
+# Platform and editor files
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+
+# Local review/scratch files
+tmp/
+
