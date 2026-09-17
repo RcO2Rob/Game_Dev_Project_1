@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/diamond.gd" id="1_diamond"]
+
+[sub_resource type="CircleShape2D" id="Diamond_shape"]
+radius = 16.0
+
+[node name="Diamond" type="Area2D"]
+scale = Vector2(0.65, 0.65)
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("1_diamond")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Diamond_shape")
+
+[node name="Gem" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -22, 15, -9, 11, 10, 0, 23, -11, 10, -15, -9)
+color = Color(0.08, 0.9, 1, 1)
+
+[node name="LeftFacet" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -22, -15, -9, -11, 10, 0, 23, -3, -5)
+color = Color(0.08, 0.48, 0.95, 1)
+
+[node name="RightFacet" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -22, 15, -9, 11, 10, 0, 23, 4, -5)
+color = Color(0.25, 0.95, 1, 1)
+
+[node name="Shine" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-3, -15, 2, -13, -1, -7, -6, -9)
+color = Color(1, 1, 1, 0.95)

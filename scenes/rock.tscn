@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/rock.gd" id="1_rock"]
+
+[sub_resource type="CircleShape2D" id="Rock_shape"]
+radius = 17.0
+
+[sub_resource type="CircleShape2D" id="Enemy_hit_shape"]
+radius = 20.0
+
+[node name="Rock" type="RigidBody2D" groups=["pickup_rock"]]
+collision_layer = 2
+collision_mask = 1
+mass = 0.8
+gravity_scale = 0.35
+linear_damp = 1.5
+script = ExtResource("1_rock")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Rock_shape")
+
+[node name="Visual" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-15, -8, -8, -16, 5, -17, 16, -8, 15, 7, 7, 16, -8, 15, -17, 5)
+color = Color(0.42, 0.48, 0.5, 1)
+
+[node name="Highlight" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-8, -9, -2, -13, 6, -11, 2, -6)
+color = Color(0.65, 0.72, 0.73, 1)
+
+[node name="EnemyHitbox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyHitbox"]
+shape = SubResource("Enemy_hit_shape")

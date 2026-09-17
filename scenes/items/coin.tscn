@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/coin.gd" id="1_coin"]
+
+[sub_resource type="CircleShape2D" id="Coin_shape"]
+radius = 14.0
+
+[node name="Coin" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("1_coin")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Coin_shape")
+
+[node name="Outer" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -15, 8, -13, 13, -8, 15, 0, 13, 8, 8, 13, 0, 15, -8, 13, -13, 8, -15, 0, -13, -8, -8, -13)
+color = Color(1, 0.68, 0.05, 1)
+
+[node name="Inner" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -10, 6, -8, 9, -3, 9, 4, 5, 9, -2, 10, -8, 6, -10, 0, -7, -6, -2, -9)
+color = Color(1, 0.88, 0.25, 1)
+
+[node name="Mark" type="Line2D" parent="."]
+points = PackedVector2Array(2, -7, -3, -4, -3, 5, 3, 7)
+width = 2.0
+default_color = Color(0.78, 0.42, 0.02, 1)

@@ -1,0 +1,37 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemy.gd" id="1_enemy"]
+
+[sub_resource type="RectangleShape2D" id="Crab_shape"]
+size = Vector2(44, 25)
+
+[node name="Crab" type="CharacterBody2D" groups=["enemy"]]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1_enemy")
+move_speed = 55.0
+patrol_distance = 125.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 3)
+shape = SubResource("Crab_shape")
+
+[node name="Body" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-19, -5, -12, -14, 12, -14, 19, -5, 17, 11, -17, 11)
+color = Color(0.88, 0.22, 0.16, 1)
+
+[node name="LeftClaw" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-18, -3, -31, -12, -35, -4, -28, 2, -19, 4)
+color = Color(0.96, 0.31, 0.2, 1)
+
+[node name="RightClaw" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(18, -3, 31, -12, 35, -4, 28, 2, 19, 4)
+color = Color(0.96, 0.31, 0.2, 1)
+
+[node name="Eyes" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-11, -17, -5, -17, -5, -11, 5, -11, 5, -17, 11, -17, 11, -9, -11, -9)
+color = Color(1, 0.9, 0.58, 1)
+
+[node name="Pupils" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-9, -16, -6, -16, -6, -12, -9, -12, 6, -16, 9, -16, 9, -12, 6, -12)
+color = Color(0.05, 0.08, 0.1, 1)

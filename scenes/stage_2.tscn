@@ -1,0 +1,74 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/backgrounds/underwater_background.png" id="1_background"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/effects/ambient_bubbles.tscn" id="3_bubbles"]
+
+[sub_resource type="RectangleShape2D" id="Floor_shape"]
+size = Vector2(2304, 80)
+
+[sub_resource type="RectangleShape2D" id="Left_wall_shape"]
+size = Vector2(32, 648)
+
+[node name="Stage2" type="Node2D"]
+
+[node name="BackgroundLayer" type="CanvasLayer" parent="."]
+layer = -10
+
+[node name="UnderwaterBackground" type="TextureRect" parent="BackgroundLayer"]
+offset_right = 1152.0
+offset_bottom = 648.0
+mouse_filter = 2
+texture = ExtResource("1_background")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="AmbientBubbles" parent="." instance=ExtResource("3_bubbles")]
+position = Vector2(0, 648)
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(1152, 608)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("Floor_shape")
+
+[node name="Visual" type="Polygon2D" parent="Floor"]
+polygon = PackedVector2Array(-1152, -40, 1152, -40, 1152, 40, -1152, 40)
+color = Color(0.08, 0.28, 0.36, 1)
+
+[node name="LeftWall" type="StaticBody2D" parent="."]
+position = Vector2(-16, 324)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall"]
+shape = SubResource("Left_wall_shape")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(90, 520)
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Panel" type="ColorRect" parent="HUD"]
+offset_left = 24.0
+offset_top = 22.0
+offset_right = 430.0
+offset_bottom = 92.0
+mouse_filter = 2
+color = Color(0.01, 0.07, 0.12, 0.78)
+
+[node name="Title" type="Label" parent="HUD/Panel"]
+offset_left = 18.0
+offset_top = 10.0
+offset_right = 390.0
+offset_bottom = 38.0
+theme_override_colors/font_color = Color(0.95, 0.84, 0.35, 1)
+theme_override_font_sizes/font_size = 20
+text = "STAGE 2 - CORAL CURRENT"
+
+[node name="Message" type="Label" parent="HUD/Panel"]
+offset_left = 18.0
+offset_top = 41.0
+offset_right = 390.0
+offset_bottom = 65.0
+theme_override_colors/font_color = Color(0.9, 0.97, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = "Stage 2 draft - ready for level design"

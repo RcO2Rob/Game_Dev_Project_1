@@ -1,0 +1,117 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/rock.tscn" id="2_rock"]
+
+[sub_resource type="RectangleShape2D" id="Floor_shape"]
+size = Vector2(2304, 56)
+
+[sub_resource type="RectangleShape2D" id="Platform_one_shape"]
+size = Vector2(260, 28)
+
+[sub_resource type="RectangleShape2D" id="Platform_two_shape"]
+size = Vector2(220, 28)
+
+[sub_resource type="RectangleShape2D" id="Platform_three_shape"]
+size = Vector2(300, 28)
+
+[sub_resource type="RectangleShape2D" id="Wall_shape"]
+size = Vector2(36, 648)
+
+[node name="TestRoom" type="Node2D"]
+
+[node name="Background" type="Polygon2D" parent="."]
+z_index = -10
+polygon = PackedVector2Array(0, 0, 2304, 0, 2304, 648, 0, 648)
+color = Color(0.025, 0.22, 0.34, 1)
+
+[node name="WaterGlow" type="Polygon2D" parent="."]
+z_index = -9
+polygon = PackedVector2Array(0, 0, 2304, 0, 2304, 170, 0, 290)
+color = Color(0.08, 0.45, 0.56, 0.55)
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(1152, 620)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("Floor_shape")
+
+[node name="Visual" type="Polygon2D" parent="Floor"]
+polygon = PackedVector2Array(-1152, -28, 1152, -28, 1152, 28, -1152, 28)
+color = Color(0.15, 0.35, 0.31, 1)
+
+[node name="LeftWall" type="StaticBody2D" parent="."]
+position = Vector2(-18, 324)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWall"]
+shape = SubResource("Wall_shape")
+
+[node name="PlatformOne" type="StaticBody2D" parent="."]
+position = Vector2(520, 490)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformOne"]
+shape = SubResource("Platform_one_shape")
+
+[node name="Visual" type="Polygon2D" parent="PlatformOne"]
+polygon = PackedVector2Array(-130, -14, 130, -14, 130, 14, -130, 14)
+color = Color(0.26, 0.48, 0.39, 1)
+
+[node name="PlatformTwo" type="StaticBody2D" parent="."]
+position = Vector2(960, 370)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformTwo"]
+shape = SubResource("Platform_two_shape")
+
+[node name="Visual" type="Polygon2D" parent="PlatformTwo"]
+polygon = PackedVector2Array(-110, -14, 110, -14, 110, 14, -110, 14)
+color = Color(0.34, 0.5, 0.38, 1)
+
+[node name="PlatformThree" type="StaticBody2D" parent="."]
+position = Vector2(1450, 470)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlatformThree"]
+shape = SubResource("Platform_three_shape")
+
+[node name="Visual" type="Polygon2D" parent="PlatformThree"]
+polygon = PackedVector2Array(-150, -14, 150, -14, 150, 14, -150, 14)
+color = Color(0.22, 0.43, 0.36, 1)
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+position = Vector2(150, 530)
+
+[node name="RockOne" parent="." instance=ExtResource("2_rock")]
+position = Vector2(320, 565)
+
+[node name="RockTwo" parent="." instance=ExtResource("2_rock")]
+position = Vector2(670, 565)
+
+[node name="RockThree" parent="." instance=ExtResource("2_rock")]
+position = Vector2(1100, 315)
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Panel" type="ColorRect" parent="HUD"]
+offset_left = 24.0
+offset_top = 22.0
+offset_right = 440.0
+offset_bottom = 126.0
+color = Color(0.01, 0.07, 0.12, 0.78)
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="HUD/Panel"]
+offset_left = 18.0
+offset_top = 12.0
+offset_right = 398.0
+offset_bottom = 39.0
+theme_override_colors/font_color = Color(0.95, 0.84, 0.35, 1)
+theme_override_font_sizes/font_size = 20
+text = "UNDERWATER WORLD - MOVEMENT TEST"
+
+[node name="Controls" type="Label" parent="HUD/Panel"]
+offset_left = 18.0
+offset_top = 48.0
+offset_right = 398.0
+offset_bottom = 90.0
+theme_override_colors/font_color = Color(0.9, 0.97, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "A/D: Move    W: Swim    S: Fast dive\nN: Pick up / throw nearby rock"

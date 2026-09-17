@@ -1,0 +1,41 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/bubble.gd" id="1_bubble"]
+
+[sub_resource type="CircleShape2D" id="Bubble_shape"]
+radius = 24.0
+
+[sub_resource type="RectangleShape2D" id="Ride_platform_shape"]
+size = Vector2(42, 7)
+
+[node name="Bubble" type="Area2D" groups=["sword_target"]]
+collision_layer = 16
+collision_mask = 7
+script = ExtResource("1_bubble")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Bubble_shape")
+
+[node name="Shell" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -25, 10, -23, 19, -16, 24, -7, 25, 3, 21, 13, 14, 21, 4, 25, -7, 24, -16, 19, -23, 10, -25, 0, -23, -10, -17, -18, -8, -23)
+color = Color(0.45, 0.9, 1, 0.38)
+
+[node name="Rim" type="Line2D" parent="."]
+points = PackedVector2Array(0, -25, 10, -23, 19, -16, 24, -7, 25, 3, 21, 13, 14, 21, 4, 25, -7, 24, -16, 19, -23, 10, -25, 0, -23, -10, -17, -18, -8, -23, 0, -25)
+width = 2.0
+default_color = Color(0.72, 0.96, 1, 0.85)
+
+[node name="Shine" type="Line2D" parent="."]
+points = PackedVector2Array(-13, -12, -8, -17, -2, -19)
+width = 3.0
+default_color = Color(1, 1, 1, 0.85)
+
+[node name="RidePlatform" type="AnimatableBody2D" parent="."]
+collision_layer = 8
+collision_mask = 0
+sync_to_physics = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RidePlatform"]
+position = Vector2(0, -25)
+shape = SubResource("Ride_platform_shape")
+disabled = true

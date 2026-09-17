@@ -1,0 +1,99 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_player"]
+
+[sub_resource type="CapsuleShape2D" id="Capsule_player"]
+radius = 16.0
+height = 48.0
+
+[sub_resource type="CircleShape2D" id="Pickup_radius"]
+radius = 72.0
+
+[sub_resource type="RectangleShape2D" id="Sword_hit_shape"]
+size = Vector2(44, 16)
+
+[node name="Player" type="CharacterBody2D" groups=["player"]]
+collision_mask = 13
+script = ExtResource("1_player")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Capsule_player")
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Main" type="Polygon2D" parent="Body"]
+polygon = PackedVector2Array(-15, -20, 13, -20, 18, -8, 18, 13, 8, 22, -10, 22, -18, 10, -18, -9)
+color = Color(0.98, 0.78, 0.18, 1)
+
+[node name="Window" type="Polygon2D" parent="Body"]
+polygon = PackedVector2Array(-9, -13, 8, -13, 12, -7, 8, 0, -9, 0, -13, -7)
+color = Color(0.2, 0.75, 0.9, 1)
+
+[node name="Fin" type="Polygon2D" parent="Body"]
+polygon = PackedVector2Array(-17, 2, -31, 12, -17, 15)
+color = Color(0.95, 0.45, 0.16, 1)
+
+[node name="Eye" type="Polygon2D" parent="Body"]
+polygon = PackedVector2Array(4, -9, 9, -9, 9, -4, 4, -4)
+color = Color(0.03, 0.08, 0.12, 1)
+
+[node name="SwordPivot" type="Node2D" parent="Body"]
+visible = false
+position = Vector2(10, 5)
+rotation = -0.78
+
+[node name="Blade" type="Polygon2D" parent="Body/SwordPivot"]
+polygon = PackedVector2Array(1, -4, 35, -4, 43, 0, 35, 4, 1, 4)
+color = Color(0.58, 0.66, 0.69, 1)
+
+[node name="BladeEdge" type="Line2D" parent="Body/SwordPivot"]
+points = PackedVector2Array(3, -2, 34, -2, 40, 0)
+width = 1.5
+default_color = Color(0.88, 0.96, 0.97, 0.9)
+
+[node name="Guard" type="Polygon2D" parent="Body/SwordPivot"]
+polygon = PackedVector2Array(-3, -10, 3, -10, 3, 10, -3, 10)
+color = Color(0.2, 0.27, 0.29, 1)
+
+[node name="Handle" type="Polygon2D" parent="Body/SwordPivot"]
+polygon = PackedVector2Array(-15, -3, 0, -3, 0, 3, -15, 3)
+color = Color(0.39, 0.22, 0.12, 1)
+
+[node name="SwordHitbox" type="Area2D" parent="Body/SwordPivot"]
+collision_layer = 0
+collision_mask = 20
+monitoring = true
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Body/SwordPivot/SwordHitbox"]
+position = Vector2(22, 0)
+shape = SubResource("Sword_hit_shape")
+
+[node name="BubbleShell" type="Polygon2D" parent="."]
+visible = false
+z_index = 5
+polygon = PackedVector2Array(0, -34, 13, -31, 25, -23, 32, -11, 34, 2, 29, 17, 20, 28, 7, 34, -8, 33, -21, 27, -30, 15, -34, 1, -31, -14, -23, -25, -12, -32)
+color = Color(0.48, 0.91, 1, 0.38)
+
+[node name="BubbleRim" type="Line2D" parent="BubbleShell"]
+points = PackedVector2Array(0, -34, 13, -31, 25, -23, 32, -11, 34, 2, 29, 17, 20, 28, 7, 34, -8, 33, -21, 27, -30, 15, -34, 1, -31, -14, -23, -25, -12, -32, 0, -34)
+width = 2.0
+default_color = Color(0.78, 0.98, 1, 0.9)
+
+[node name="HoldPoint" type="Node2D" parent="."]
+position = Vector2(34, -8)
+
+[node name="PickupArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PickupArea"]
+shape = SubResource("Pickup_radius")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+limit_left = 0
+limit_top = 0
+limit_right = 2304
+limit_bottom = 648

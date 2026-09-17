@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/seabed_hole.gd" id="1_hole"]
+
+[sub_resource type="RectangleShape2D" id="Kill_shape"]
+size = Vector2(96, 104)
+
+[node name="SeabedHole" type="Node2D"]
+script = ExtResource("1_hole")
+
+[node name="DarkOpening" type="Polygon2D" parent="."]
+z_index = -1
+polygon = PackedVector2Array(-48, -7, 48, -7, 42, 18, 27, 30, 0, 35, -27, 30, -42, 18)
+color = Color(0.008, 0.035, 0.08, 1)
+
+[node name="LeftRim" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-54, -10, -31, -10, -22, 4, -48, 8)
+color = Color(0.12, 0.31, 0.42, 1)
+
+[node name="RightRim" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(54, -10, 31, -10, 22, 4, 48, 8)
+color = Color(0.12, 0.31, 0.42, 1)
+
+[node name="BubbleTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="KillZone" type="Area2D" parent="."]
+position = Vector2(0, 57)
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KillZone"]
+shape = SubResource("Kill_shape")

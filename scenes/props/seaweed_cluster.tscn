@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/decorations/seaweed_cluster.png" id="1_seaweed"]
+[ext_resource type="Script" path="res://scripts/seaweed_sway.gd" id="2_sway"]
+
+[node name="SeaweedCluster" type="Node2D"]
+script = ExtResource("2_sway")
+
+[node name="SwayPivot" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="SwayPivot"]
+texture_filter = 1
+position = Vector2(0, -48)
+texture = ExtResource("1_seaweed")

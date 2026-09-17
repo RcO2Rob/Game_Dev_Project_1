@@ -1,0 +1,192 @@
+#!/usr/bin/env python3
+"""Generate the original music and sound effects used by Underwater World."""
+
+from __future__ import annotations
+
+import math
+import random
+import struct
+import wave
+from pathlib import Path
+
+
+SAMPLE_RATE = 22050
+OUTPUT_DIR = Path(__file__).resolve().parents[2] / "assets" / "audio"
+
+
+def write_wav(name: str, samples: list[float]) -> None:
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    with wave.open(str(OUTPUT_DIR / name), "wb") as output:
+        output.setnchannels(1)
+        output.setsampwidth(2)
+        output.setframerate(SAMPLE_RATE)
+        pcm = bytearray()
+        for sample in samples:
+            value = max(-1.0, min(1.0, math.tanh(sample)))
+            pcm.extend(struct.pack("<h", int(value * 32767)))
+        output.writeframes(pcm)
+
+
+def underwater_ambient() -> list[float]:
+    duration = 16.0
+    total = int(duration * SAMPLE_RATE)
+    chords = [
+        (73.42, 110.00, 146.83),
+        (58.27, 116.54, 146.83),
+        (65.41, 110.00, 130.81),
+        (55.00, 98.00, 130.81),
+    ]
+    melody = [293.66, 329.63, 349.23, 293.66, 261.63, 293.66, 220.00, 261.63]
+    result: list[float] = []
+    for index in range(total):
+        t = index / SAMPLE_RATE
+        bar = int(t / 4.0) % len(chords)
+        bar_phase = (t % 4.0) / 4.0
+        swell = math.sin(math.pi * bar_phase) ** 0.65
+        sample = 0.08 * math.sin(2.0 * math.pi * 36.71 * t)
+        for tone_index, frequency in enumerate(chords[bar]):
+            phase = tone_index * 0.8
+            sample += 0.09 * swell * math.sin(2.0 * math.pi * frequency * t + phase)
+            sample += 0.025 * swell * math.sin(2.0 * math.pi * frequency * 2.0 * t + phase)
+
+        note_length = 2.0
+        note_index = int(t / note_length) % len(melody)
+        note_phase = (t % note_length) / note_length
+        note_envelope = math.sin(math.pi * note_phase) ** 2
+        sample += 0.055 * note_envelope * math.sin(2.0 * math.pi * melody[note_index] * t)
+
+        shimmer = 0.5 + 0.5 * math.sin(2.0 * math.pi * 0.07 * t)
+        sample += 0.018 * shimmer * math.sin(2.0 * math.pi * 523.25 * t + 0.7)
+        edge_fade = min(1.0, t / 0.12, (duration - t) / 0.12)
+        result.append(sample * max(0.0, edge_fade))
+    return result
+
+
+def enemy_hit() -> list[float]:
+    rng = random.Random(6102)
+    duration = 0.24
+    result: list[float] = []
+    for index in range(int(duration * SAMPLE_RATE)):
+        t = index / SAMPLE_RATE
+        decay = math.exp(-18.0 * t)
+        sweep = 155.0 - 250.0 * t
+        thump = math.sin(2.0 * math.pi * sweep * t) * decay * 0.75
+        crack = (rng.random() * 2.0 - 1.0) * math.exp(-36.0 * t) * 0.5
+        result.append(thump + crack)
+    return result
+
+
+def enemy_stomp() -> list[float]:
+    duration = 0.32
+    result: list[float] = []
+    for index in range(int(duration * SAMPLE_RATE)):
+        t = index / SAMPLE_RATE
+        decay = math.exp(-10.0 * t)
+        frequency = 210.0 - 320.0 * t
+        body = math.sin(2.0 * math.pi * frequency * t) * decay * 0.65
+        pop = math.sin(2.0 * math.pi * 520.0 * t) * math.exp(-30.0 * t) * 0.28
+        result.append(body + pop)
+    return result
+
+
+def player_hurt() -> list[float]:
+    duration = 0.38
+    result: list[float] = []
+    for index in range(int(duration * SAMPLE_RATE)):
+        t = index / SAMPLE_RATE
+        decay = math.exp(-7.5 * t)
+        frequency = 390.0 - 520.0 * t
+        pulse = math.sin(2.0 * math.pi * frequency * t)
+        pulse += 0.35 * math.sin(2.0 * math.pi * frequency * 1.5 * t)
+        result.append(pulse * decay * 0.55)
+    return result
+
+
+def coin_pickup() -> list[float]:
+    duration = 0.24
+    result: list[float] = []
+    for index in range(int(duration * SAMPLE_RATE)):
+        t = index / SAMPLE_RATE
+        second_note = t >= 0.1
+        local_time = t - 0.1 if second_note else t
+        frequency = 880.0 if second_note else 659.25
+        decay = math.exp(-18.0 * local_time)
+        tone = math.sin(2.0 * math.pi * frequency * local_time)
+        tone += 0.3 * math.sin(2.0 * math.pi * frequency * 2.0 * local_time)
+        result.append(tone * decay * 0.48)
+    return result
+
+
+def diamond_pickup() -> list[float]:
+    duration = 0.48
+    notes = (659.25, 830.61, 987.77, 1318.51)
+    result: list[float] = []
+    for index in range(int(duration * SAMPLE_RATE)):
+        t = index / SAMPLE_RATE
+        note_index = min(int(t / 0.1), len(notes) - 1)
+        local_time = t - note_index * 0.1
+        decay = math.exp(-12.0 * max(local_time, 0.0))
+        frequency = notes[note_index]
+        tone = math.sin(2.0 * math.pi * frequency * local_time)
+        tone += 0.24 * math.sin(2.0 * math.pi * frequency * 2.0 * local_time)
+        result.append(tone * decay * 0.42)
+    return result
+
+
+def weapon_pickup() -> list[float]:
+    duration = 0.42
+    notes = (293.66, 440.0, 587.33)
+    result: list[float] = []
+    for index in range(int(duration * SAMPLE_RATE)):
+        t = index / SAMPLE_RATE
+        note_index = min(int(t / 0.12), len(notes) - 1)
+        local_time = t - note_index * 0.12
+        frequency = notes[note_index]
+        decay = math.exp(-10.0 * max(local_time, 0.0))
+        tone = math.sin(2.0 * math.pi * frequency * local_time)
+        tone += 0.28 * math.sin(2.0 * math.pi * frequency * 2.0 * local_time)
+        result.append(tone * decay * 0.42)
+    return result
+
+
+def sword_swing() -> list[float]:
+    rng = random.Random(8801)
+    duration = 0.22
+    result: list[float] = []
+    for index in range(int(duration * SAMPLE_RATE)):
+        t = index / SAMPLE_RATE
+        envelope = math.sin(math.pi * min(t / duration, 1.0)) ** 1.7
+        noise = rng.random() * 2.0 - 1.0
+        whistle = math.sin(2.0 * math.pi * (980.0 - 2100.0 * t) * t)
+        result.append((noise * 0.28 + whistle * 0.24) * envelope)
+    return result
+
+
+def barrel_break() -> list[float]:
+    rng = random.Random(4407)
+    duration = 0.38
+    result: list[float] = []
+    for index in range(int(duration * SAMPLE_RATE)):
+        t = index / SAMPLE_RATE
+        decay = math.exp(-9.0 * t)
+        thump = math.sin(2.0 * math.pi * (105.0 - 95.0 * t) * t) * 0.55
+        splinter = (rng.random() * 2.0 - 1.0) * 0.5
+        result.append((thump + splinter) * decay)
+    return result
+
+
+def main() -> None:
+    write_wav("underwater_ambient.wav", underwater_ambient())
+    write_wav("enemy_hit.wav", enemy_hit())
+    write_wav("enemy_stomp.wav", enemy_stomp())
+    write_wav("player_hurt.wav", player_hurt())
+    write_wav("coin_pickup.wav", coin_pickup())
+    write_wav("diamond_pickup.wav", diamond_pickup())
+    write_wav("weapon_pickup.wav", weapon_pickup())
+    write_wav("sword_swing.wav", sword_swing())
+    write_wav("barrel_break.wav", barrel_break())
+    print(f"Generated audio assets in {OUTPUT_DIR}")
+
+
+if __name__ == "__main__":
+    main()
