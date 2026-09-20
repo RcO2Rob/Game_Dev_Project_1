@@ -28,6 +28,9 @@ func _run() -> void:
 	var player := stage.get_node("Player")
 	assert(player.current_health == 3)
 	assert(player._swim_jumps_remaining == 3)
+	assert(player.get_node("Body/HelmetShell") != null)
+	assert(player.get_node("Body/BackLeg") != null)
+	assert(player.get_node("Body/FrontLeg") != null)
 
 	player.global_position += Vector2(40, 0)
 	var damaged_position: Vector2 = player.global_position

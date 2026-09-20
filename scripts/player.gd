@@ -79,9 +79,41 @@ func _physics_process(delta: float) -> void:
 func _animate_character(delta: float) -> void:
 	_visual_time += delta
 	var movement_amount := clampf(absf(velocity.x) / max_horizontal_speed, 0.0, 1.0)
-	var animation_speed := lerpf(2.2, 7.5, movement_amount)
-	$Body.position.y = sin(_visual_time * animation_speed) * lerpf(0.8, 1.8, movement_amount)
-	$Body/Fin.rotation = sin(_visual_time * animation_speed + 0.8) * lerpf(0.12, 0.3, movement_amount)
+	var grounded := is_on_floor()
+	var leg_back_target := 0.0
+	var leg_front_target := 0.0
+	var arm_back_target := 0.16
+	var arm_front_target := -0.18
+
+	if grounded and movement_amount > 0.08:
+		var walk_phase := sin(_visual_time * lerpf(7.0, 11.0, movement_amount))
+		leg_back_target = walk_phase * 0.58
+		leg_front_target = -walk_phase * 0.58
+		arm_back_target = 0.16 - walk_phase * 0.22
+		arm_front_target = -0.18 + walk_phase * 0.18
+		$Body.position.y = absf(cos(_visual_time * 9.0)) * 1.3
+	elif not grounded:
+		$Body.position.y = sin(_visual_time * 3.0) * 0.45
+		if velocity.y < -25.0:
+			# 上浮时收腿并把双臂向前，形成清楚的跳跃轮廓。
+			leg_back_target = -0.52
+			leg_front_target = 0.38
+			arm_back_target = 0.42
+			arm_front_target = -0.42
+		else:
+			# 下落时重新伸展脚蹼，落地动作不会显得僵硬。
+			leg_back_target = 0.16
+			leg_front_target = -0.18
+			arm_back_target = 0.05
+			arm_front_target = -0.08
+	else:
+		$Body.position.y = sin(_visual_time * 2.2) * 0.7
+
+	var pose_blend := minf(delta * 12.0, 1.0)
+	$Body/BackLeg.rotation = lerp_angle($Body/BackLeg.rotation, leg_back_target, pose_blend)
+	$Body/FrontLeg.rotation = lerp_angle($Body/FrontLeg.rotation, leg_front_target, pose_blend)
+	$Body/BackArm.rotation = lerp_angle($Body/BackArm.rotation, arm_back_target, pose_blend)
+	$Body/FrontArm.rotation = lerp_angle($Body/FrontArm.rotation, arm_front_target, pose_blend)
 
 	var target_tilt := 0.0
 	if velocity.y < -80.0:
@@ -89,9 +121,6 @@ func _animate_character(delta: float) -> void:
 	elif velocity.y > 150.0:
 		target_tilt = 0.13 * _facing
 	$Body.rotation = lerp_angle($Body.rotation, target_tilt, minf(delta * 7.0, 1.0))
-
-	var blink_phase := fmod(_visual_time, 4.3)
-	$Body/Eye.scale.y = 0.15 if blink_phase > 4.15 else 1.0
 
 
 func _handle_enemy_collisions(was_falling: bool) -> void:
@@ -150,6 +179,21 @@ func drop_sword() -> RigidBody2D:
 	dropped_sword.set_pickup_delay(0.55)
 	dropped_sword.launch(Vector2(_facing * 105.0, -75.0))
 	return dropped_sword
+
+
+func lose_sword_on_damage() -> RigidBody2D:
+	if not has_sword:
+		return null
+	has_sword = false
+	_is_attacking = false
+	_sword_hit_targets.clear()
+	$Body/SwordPivot.visible = false
+	$Body/SwordPivot.rotation = -0.78
+	var lost_sword := SWORD_PICKUP_SCENE.instantiate() as RigidBody2D
+	lost_sword.position = position + Vector2(_facing * 30.0, -12.0)
+	get_parent().add_child(lost_sword)
+	lost_sword.knock_away_and_disappear(Vector2(_facing * 180.0, -145.0))
+	return lost_sword
 
 
 func attack_with_sword() -> void:
@@ -330,6 +374,7 @@ func die() -> void:
 func take_damage(amount: int = 1) -> void:
 	if _invulnerability_left > 0.0 or _captured_in_bubble:
 		return
+	lose_sword_on_damage()
 	current_health -= amount
 	var audio_manager := get_node_or_null("/root/AudioManager")
 	if audio_manager:

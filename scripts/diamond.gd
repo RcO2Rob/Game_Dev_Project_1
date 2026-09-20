@@ -22,7 +22,7 @@ func _on_body_entered(body: Node) -> void:
 	if _collected or not body.has_method("add_diamond"):
 		return
 	_collected = true
-	monitoring = false
+	set_deferred("monitoring", false)
 	body.add_diamond(value)
 	var audio_manager := get_node_or_null("/root/AudioManager")
 	if audio_manager:
