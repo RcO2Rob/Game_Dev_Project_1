@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://p7vh88xpdu1l"]
+
+[ext_resource type="Script" uid="uid://b4tr1tt1lrjmj" path="res://scripts/moving_reef.gd" id="1_hntle"]
+[ext_resource type="Texture2D" uid="uid://lxuok6yrtj64" path="res://assets/art/tilesets/terrain_tileset_32.png" id="2_3nkhp"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dawrm"]
+size = Vector2(96, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dttsg"]
+atlas = ExtResource("2_3nkhp")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m3j8v"]
+atlas = ExtResource("2_3nkhp")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7bpe2"]
+atlas = ExtResource("2_3nkhp")
+region = Rect2(64, 0, 32, 32)
+
+[node name="MovingReef" type="AnimatableBody2D" unique_id=1311913205]
+sync_to_physics = false
+script = ExtResource("1_hntle")
+travel = Vector2(38, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1828392200]
+shape = SubResource("RectangleShape2D_dawrm")
+
+[node name="TerrainTile1" type="Sprite2D" parent="." unique_id=205949632]
+texture_filter = 1
+position = Vector2(-32, 4)
+texture = SubResource("AtlasTexture_dttsg")
+
+[node name="TerrainTile2" type="Sprite2D" parent="." unique_id=1306451603]
+texture_filter = 1
+position = Vector2(0, 4)
+texture = SubResource("AtlasTexture_m3j8v")
+
+[node name="TerrainTile3" type="Sprite2D" parent="." unique_id=948668486]
+texture_filter = 1
+position = Vector2(32, 4)
+texture = SubResource("AtlasTexture_7bpe2")

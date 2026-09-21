@@ -10,6 +10,9 @@ func _run() -> void:
 	root.add_child(stage)
 	current_scene = stage
 	await process_frame
+	assert(stage.get_node_or_null("MechanicTutorial/TutorialCurrent") == null)
+	assert(stage.get_node("MechanicTutorial/TutorialMovingReef") != null)
+	assert(stage.get_node("MechanicTutorial/TutorialVent") != null)
 	var audio_manager := root.get_node("AudioManager")
 	assert(audio_manager != null)
 	assert(audio_manager._music_player.stream != null)
@@ -91,10 +94,24 @@ func _run() -> void:
 	dropped_sword._pickup_delay = 0.0
 	await physics_frame
 	assert(not player.has_sword)
-	player.pick_up_nearest_item()
+	assert(dropped_sword.collect_by(player))
 	assert(player.has_sword)
 	assert(player.get_node("Body/SwordPivot").visible)
 	var barrel := stage.get_node("BreakableBarrel")
+	assert(barrel.collision_layer & 2 != 0, "Barrels must occupy the obstacle layer used by crabs")
+	var barrel_block_crab := (load("res://scenes/enemies/crab.tscn") as PackedScene).instantiate()
+	barrel_block_crab.position = barrel.position + Vector2(-90, -24)
+	stage.add_child(barrel_block_crab)
+	await physics_frame
+	barrel_block_crab._direction = 1.0
+	barrel_block_crab._start_x = barrel_block_crab.global_position.x
+	var furthest_crab_x: float = barrel_block_crab.global_position.x
+	for _frame in range(100):
+		await physics_frame
+		furthest_crab_x = maxf(furthest_crab_x, barrel_block_crab.global_position.x)
+	assert(furthest_crab_x < barrel.global_position.x - 30.0, "A crab must not pass through a barrel")
+	barrel_block_crab.queue_free()
+	await process_frame
 	var barrel_test_rock := stage.get_node("RockTwo")
 	barrel_test_rock._is_thrown = true
 	barrel_test_rock._on_enemy_hitbox_body_entered(barrel)
@@ -103,12 +120,35 @@ func _run() -> void:
 	barrel.global_position = player.global_position + Vector2(50, 0)
 	player._facing = 1.0
 	player.get_node("Body").scale.x = absf(player.get_node("Body").scale.x)
+	barrel._reward_roll_override = 1.0
 	var child_count_before_barrel := stage.get_child_count()
 	player.attack_with_sword()
 	for _frame in range(6):
 		await physics_frame
 	assert(barrel._broken)
 	assert(stage.get_child_count() >= child_count_before_barrel + 7)
+
+	var rescue_barrel := (load("res://scenes/props/breakable_barrel.tscn") as PackedScene).instantiate()
+	rescue_barrel.position = player.position + Vector2(150, 0)
+	stage.add_child(rescue_barrel)
+	player.diamond_count = 2
+	assert(rescue_barrel._should_drop_diamonds(player, 0.199))
+	assert(not rescue_barrel._should_drop_diamonds(player, 0.2))
+	player.diamond_count = 3
+	assert(not rescue_barrel._should_drop_diamonds(player, 0.0))
+	player.diamond_count = 2
+	var diamonds_before_reward := 0
+	for child in stage.get_children():
+		if child.get_script() == load("res://scripts/diamond.gd"):
+			diamonds_before_reward += 1
+	rescue_barrel._reward_roll_override = 0.0
+	rescue_barrel.hit_by_weapon()
+	await process_frame
+	var diamonds_after_reward := 0
+	for child in stage.get_children():
+		if child.get_script() == load("res://scripts/diamond.gd"):
+			diamonds_after_reward += 1
+	assert(diamonds_after_reward == diamonds_before_reward + 2, "A successful low-diamond reward must drop exactly two diamonds")
 	for _frame in range(18):
 		await physics_frame
 	assert(not player._is_attacking)
@@ -134,7 +174,11 @@ func _run() -> void:
 	for _frame in range(14):
 		await physics_frame
 
-	var crab := stage.get_node("CrabOne")
+	var crab := stage.get_node_or_null("CrabOne")
+	if not is_instance_valid(crab):
+		crab = (load("res://scenes/enemies/crab.tscn") as PackedScene).instantiate()
+		crab.name = "CrabCollisionTest"
+		stage.add_child(crab)
 	var rock := stage.get_node("RockOne")
 	crab.global_position = Vector2(500, 520)
 	crab._start_x = 500.0
@@ -142,6 +186,13 @@ func _run() -> void:
 	for _frame in range(150):
 		await physics_frame
 	assert(crab.global_position.x > rock.global_position.x)
+	var impact_rock := (load("res://scenes/rock.tscn") as PackedScene).instantiate()
+	stage.add_child(impact_rock)
+	impact_rock._is_thrown = true
+	impact_rock._on_enemy_hitbox_body_entered(crab)
+	await process_frame
+	assert(not is_instance_valid(impact_rock), "A thrown rock must disappear after hitting an enemy")
+	assert(crab._defeated)
 
 	var bubble := (load("res://scenes/hazards/bubble.tscn") as PackedScene).instantiate()
 	stage.add_child(bubble)
@@ -155,9 +206,16 @@ func _run() -> void:
 	stage.get_node("ConchExit")._on_body_entered(player)
 	await process_frame
 	await process_frame
+	var end_shop := root.get_node("EndShop")
+	assert(paused and end_shop.opened)
+	for button in end_shop.find_children("*", "Button", true, false):
+		assert(button.text.is_empty(), "End shop must communicate with icons, not button text")
+	end_shop.continue_run()
+	for _frame in range(5):
+		await process_frame
 	assert(current_scene != null)
 	assert(current_scene.scene_file_path == "res://scenes/stage_2.tscn")
-	print("Gameplay smoke test passed")
+	print("Gameplay smoke test passed, including Stage 1 mechanic tutorial and visual end shop")
 	current_scene.queue_free()
 	await process_frame
 	quit()

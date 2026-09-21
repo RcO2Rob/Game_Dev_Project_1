@@ -13,7 +13,8 @@ func _ready() -> void:
 		marker.body_entered.connect(_checkpoint_entered.bind(marker))
 	$PrecisionChasm.body_entered.connect(_chasm_entered)
 	$ConchExit.body_entered.connect(_finish)
-	$Completion/Panel/Retry.pressed.connect(func(): get_tree().reload_current_scene())
+	$Completion/Panel/Retry.text = "Continue to Stage 3"
+	$Completion/Panel/Retry.pressed.connect(_continue_to_stage_3)
 
 
 func _process(delta: float) -> void:
@@ -44,7 +45,7 @@ func _finish(body: Node2D) -> void:
 	if body != $Player or completed:
 		return
 	completed = true
-	_show_completion.call_deferred(body)
+	get_node("/root/EndShop").call_deferred("open_shop", body, "res://scenes/stage_3.tscn")
 
 
 func _show_completion(body: Node2D) -> void:
@@ -52,6 +53,12 @@ func _show_completion(body: Node2D) -> void:
 	for child in get_children():
 		if child is Node2D:
 			child.process_mode = Node.PROCESS_MODE_DISABLED
-	$Completion/Panel/Result.text = "STAGE 2 COMPLETE\n%d:%02d   |   COINS %d   |   DIAMONDS %d / 5\nStage 3 is not built yet." % [int(elapsed) / 60, int(elapsed) % 60, body.coin_count, body.diamond_count]
+	$Completion/Panel/Result.text = "STAGE 2 COMPLETE\n%d:%02d   |   COINS %d   |   DIAMONDS %d\nNext: the Sunken Temple & Diamond Shop" % [int(elapsed) / 60, int(elapsed) % 60, body.coin_count, body.diamond_count]
 	$Completion.show()
 	$Completion/Panel/Retry.grab_focus()
+
+func _continue_to_stage_3() -> void:
+	if not completed:
+		return
+	get_node("/root/RunState").capture($Player, "res://scenes/stage_3.tscn")
+	get_tree().call_deferred("change_scene_to_file", "res://scenes/stage_3.tscn")

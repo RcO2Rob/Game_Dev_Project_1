@@ -52,6 +52,7 @@ func _ready() -> void:
 	_swim_jumps_remaining = max_swim_jumps
 	$Body/SwordPivot/SwordHitbox.body_entered.connect(_on_sword_hitbox_body_entered)
 	$Body/SwordPivot/SwordHitbox.area_entered.connect(_on_sword_hitbox_area_entered)
+	get_node("/root/RunState").restore(self)
 
 
 func _physics_process(delta: float) -> void:
@@ -64,7 +65,10 @@ func _physics_process(delta: float) -> void:
 	_update_swim_buffer(delta)
 	_apply_horizontal_movement(delta)
 	_apply_vertical_movement(delta)
-	var was_falling := velocity.y > 35.0
+	# A tall enemy can meet the player immediately after the upward arc ends,
+	# while the underwater fall speed is still very small. Any downward motion
+	# should count as a stomp when the collision normal confirms a top landing.
+	var was_falling := velocity.y > 0.0
 	move_and_slide()
 	if is_on_floor():
 		_swim_jumps_remaining = max_swim_jumps

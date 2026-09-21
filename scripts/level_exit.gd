@@ -13,5 +13,5 @@ func _on_body_entered(body: Node) -> void:
 	if _transitioning or not body.is_in_group("player"):
 		return
 	_transitioning = true
-	monitoring = false
-	get_tree().change_scene_to_file(next_scene)
+	set_deferred("monitoring", false)
+	get_node("/root/EndShop").call_deferred("open_shop", body, next_scene)

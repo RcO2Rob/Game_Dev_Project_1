@@ -65,4 +65,4 @@ func _on_enemy_hitbox_body_entered(body: Node) -> void:
 	$EnemyHitbox.set_deferred("monitoring", false)
 	if body.has_method("hit_by_rock"):
 		body.hit_by_rock()
-	linear_velocity *= 0.35
+	queue_free()

@@ -1,0 +1,93 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/timed_vent.gd" id="1_8mxlm"]
+[ext_resource type="Texture2D" path="res://assets/art/tilesets/terrain_tileset_32.png" id="2_5uggo"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_53ssp"]
+size = Vector2(44, 108)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_syyqm"]
+atlas = ExtResource("2_5uggo")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o7poj"]
+atlas = ExtResource("2_5uggo")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uurlu"]
+atlas = ExtResource("2_5uggo")
+region = Rect2(64, 32, 32, 32)
+
+[node name="TutorialVent" type="Area2D" unique_id=87976955]
+collision_layer = 0
+script = ExtResource("1_8mxlm")
+tutorial_mode = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1538470318]
+position = Vector2(0, -54)
+shape = SubResource("RectangleShape2D_53ssp")
+
+[node name="NozzleRock1" type="Sprite2D" parent="." unique_id=1235978873]
+texture_filter = 1
+position = Vector2(-26, -16)
+texture = SubResource("AtlasTexture_syyqm")
+
+[node name="NozzleRock2" type="Sprite2D" parent="." unique_id=1309999868]
+texture_filter = 1
+position = Vector2(0, -16)
+texture = SubResource("AtlasTexture_o7poj")
+
+[node name="NozzleRock3" type="Sprite2D" parent="." unique_id=168097494]
+texture_filter = 1
+position = Vector2(26, -16)
+texture = SubResource("AtlasTexture_uurlu")
+
+[node name="NozzleOpening" type="Polygon2D" parent="." unique_id=2037017756]
+color = Color(0.0627451, 0.18431373, 0.25882354, 1)
+polygon = PackedVector2Array(-20, -29, -12, -35, 12, -35, 20, -29, 12, -23, -12, -23)
+
+[node name="Jet" type="Node2D" parent="." unique_id=1899754508]
+
+[node name="WaterColumn" type="Polygon2D" parent="Jet" unique_id=812103111]
+color = Color(0.41960785, 0.9137255, 0.9254902, 1)
+polygon = PackedVector2Array(-20, -30, -13, -92, -7, -130, 0, -151, 9, -126, 15, -88, 20, -30)
+
+[node name="WaterHighlight" type="Line2D" parent="Jet" unique_id=1056353616]
+points = PackedVector2Array(-5, -38, -2, -78, 2, -116, 0, -140)
+width = 4.0
+default_color = Color(0.83, 1, 1, 0.8)
+
+[node name="Bubbles" type="Node2D" parent="." unique_id=778831315]
+
+[node name="Bubble1" type="Line2D" parent="Bubbles" unique_id=115268268]
+points = PackedVector2Array(-8, -51, -8.380602, -49.086582, -9.464466, -47.464466, -11.086583, -46.380604, -13, -46, -14.913417, -46.380604, -16.535534, -47.464466, -17.619398, -49.086582, -18, -51, -17.619398, -52.913418, -16.535534, -54.535534, -14.913417, -55.619396, -13, -56, -11.086583, -55.619396, -9.464466, -54.535534, -8.380602, -52.913418)
+closed = true
+width = 2.0
+default_color = Color(0.66, 0.96, 1, 0.8)
+
+[node name="Bubble2" type="Line2D" parent="Bubbles" unique_id=1857968771]
+points = PackedVector2Array(18, -76, 17.467155, -73.32121, 15.949747, -71.050255, 13.678783, -69.532845, 11, -69, 8.321217, -69.532845, 6.0502524, -71.050255, 4.5328436, -73.32121, 4, -76, 4.5328436, -78.67879, 6.0502524, -80.949745, 8.321217, -82.467155, 11, -83, 13.678783, -82.467155, 15.949747, -80.949745, 17.467155, -78.67879)
+closed = true
+width = 2.0
+default_color = Color(0.66, 0.96, 1, 0.8)
+
+[node name="Bubble3" type="Line2D" parent="Bubbles" unique_id=1950708188]
+points = PackedVector2Array(-4, -106, -4.304482, -104.46927, -5.1715727, -103.17157, -6.4692664, -102.30448, -8, -102, -9.530734, -102.30448, -10.828427, -103.17157, -11.6955185, -104.46927, -12, -106, -11.6955185, -107.53073, -10.828427, -108.82843, -9.530734, -109.69552, -8, -110, -6.4692664, -109.69552, -5.1715727, -108.82843, -4.304482, -107.53073)
+closed = true
+width = 2.0
+default_color = Color(0.66, 0.96, 1, 0.8)
+
+[node name="Bubble4" type="Line2D" parent="Bubbles" unique_id=1226489244]
+points = PackedVector2Array(12, -132, 11.619398, -130.08658, 10.535534, -128.46446, 8.913417, -127.3806, 7, -127, 5.086583, -127.3806, 3.464466, -128.46446, 2.3806024, -130.08658, 2, -132, 2.3806024, -133.91342, 3.464466, -135.53554, 5.086583, -136.6194, 7, -137, 8.913417, -136.6194, 10.535534, -135.53554, 11.619398, -133.91342)
+closed = true
+width = 2.0
+default_color = Color(0.66, 0.96, 1, 0.8)
+
+[node name="Warning" type="Label" parent="." unique_id=2123034146]
+offset_left = -24.0
+offset_top = -181.0
+offset_right = -24.0
+offset_bottom = -181.0
+theme_override_colors/font_outline_color = Color(0.0627451, 0.18431373, 0.25882354, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22

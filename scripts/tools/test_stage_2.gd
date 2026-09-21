@@ -45,7 +45,12 @@ func run() -> void:
 		await physics_frame
 	assert(current_scene == stage, "Finish must not reload Stage 2 via the old conch script")
 	assert(stage.completed)
-	assert(stage.get_node("Completion").visible)
-	assert(player.process_mode == Node.PROCESS_MODE_DISABLED)
-	print("Stage 2 checkpoint, camera and finish tests passed")
+	var end_shop := root.get_node("EndShop")
+	assert(paused and end_shop.opened)
+	assert(end_shop.destination == "res://scenes/stage_3.tscn")
+	end_shop.continue_run()
+	for frame in range(6):
+		await process_frame
+	assert(current_scene.scene_file_path == "res://scenes/stage_3.tscn")
+	print("Stage 2 checkpoint, camera and end-shop transition tests passed")
 	quit()

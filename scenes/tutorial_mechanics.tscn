@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/moving_reef.tscn" id="3_rbdj4"]
+[ext_resource type="PackedScene" path="res://scenes/hazards/tutorial_vent.tscn" id="4_rbdj4"]
+
+[node name="MechanicTutorial" type="Node2D" unique_id=61604001]
+
+[node name="TutorialVent" type="Area2D" parent="." unique_id=87976955 instance=ExtResource("4_rbdj4")]
+position = Vector2(1515, 576)
+
+[node name="TutorialMovingReef" type="AnimatableBody2D" parent="." unique_id=1311913205 instance=ExtResource("3_rbdj4")]
+position = Vector2(790, 500)
+period = 5.0

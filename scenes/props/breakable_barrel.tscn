@@ -6,7 +6,7 @@
 size = Vector2(35, 42)
 
 [node name="BreakableBarrel" type="StaticBody2D" groups=["sword_target"]]
-collision_layer = 4
+collision_layer = 6
 collision_mask = 0
 script = ExtResource("1_barrel")
 

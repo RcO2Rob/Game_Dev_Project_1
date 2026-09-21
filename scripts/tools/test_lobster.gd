@@ -80,5 +80,23 @@ func run() -> void:
 	for frame in range(65):
 		await physics_frame
 	assert(not is_instance_valid(lost_sword))
-	print("Lobster chase, claw attack and sword-loss tests passed")
+
+	# A gentle underwater descent must still count as a stomp. The lobster is
+	# taller than the crab, so the player can touch its top before reaching the
+	# old minimum fall-speed threshold.
+	var stomp_lobster := (load("res://scenes/enemies/lobster.tscn") as PackedScene).instantiate() as CharacterBody2D
+	stomp_lobster.position = Vector2(620, 258)
+	stomp_lobster.detection_range = 0.0
+	stomp_lobster.patrol_speed = 0.0
+	arena.add_child(stomp_lobster)
+	player.global_position = Vector2(620, 221)
+	player.velocity = Vector2(0, 8)
+	player._invulnerability_left = 0.0
+	var health_before_stomp: int = player.current_health
+	for frame in range(8):
+		await physics_frame
+	assert(stomp_lobster._defeated, "A low-speed top landing must stomp the lobster")
+	assert(player.current_health == health_before_stomp, "A successful lobster stomp must not hurt the player")
+	assert(player.velocity.y < 0.0, "A successful stomp must bounce the player upward")
+	print("Lobster chase, claw attack, sword-loss and stomp tests passed")
 	quit()

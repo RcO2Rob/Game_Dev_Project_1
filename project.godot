@@ -17,6 +17,8 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 [autoload]
 
 AudioManager="*res://scripts/audio_manager.gd"
+RunState="*res://scripts/run_state.gd"
+EndShop="*res://scripts/end_shop.gd"
 
 [display]
 
