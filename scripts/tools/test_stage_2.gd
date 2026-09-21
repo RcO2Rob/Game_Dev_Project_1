@@ -42,7 +42,7 @@ func run() -> void:
 		await physics_frame
 	assert(is_equal_approx(player.global_position.x, 12428.0))
 	assert(player.global_position.y >= 544.0 and player.global_position.y <= 554.0)
-	player.global_position = Vector2(15160, 520)
+	player.global_position = stage.get_node("ConchExit").global_position + Vector2(0, -41)
 	for frame in range(6):
 		await physics_frame
 	assert(current_scene == stage, "Finish must not reload Stage 2 via the old conch script")
