@@ -27,39 +27,57 @@ def write_wav(name: str, samples: list[float]) -> None:
         output.writeframes(pcm)
 
 
+def normalize_peak(samples: list[float], target: float = 0.9) -> list[float]:
+    peak = max(abs(sample) for sample in samples)
+    if peak == 0.0:
+        return samples
+    scale = target / peak
+    return [sample * scale for sample in samples]
+
+
 def underwater_ambient() -> list[float]:
-    duration = 16.0
+    # Keep the harmony calm, but put the arpeggio and melody in the range that
+    # laptop speakers reproduce clearly.  The earlier version leaned heavily
+    # on 55-150 Hz tones and was easy to mistake for silence.
+    duration = 24.0
     total = int(duration * SAMPLE_RATE)
     chords = [
-        (73.42, 110.00, 146.83),
-        (58.27, 116.54, 146.83),
-        (65.41, 110.00, 130.81),
-        (55.00, 98.00, 130.81),
+        (130.81, 196.00, 261.63, 329.63),
+        (110.00, 164.81, 220.00, 261.63),
+        (87.31, 130.81, 174.61, 220.00),
+        (98.00, 146.83, 196.00, 246.94),
     ]
-    melody = [293.66, 329.63, 349.23, 293.66, 261.63, 293.66, 220.00, 261.63]
+    melody = [523.25, 587.33, 659.25, 587.33, 493.88, 523.25, 440.00, 493.88]
     result: list[float] = []
     for index in range(total):
         t = index / SAMPLE_RATE
-        bar = int(t / 4.0) % len(chords)
-        bar_phase = (t % 4.0) / 4.0
+        bar = int(t / 6.0) % len(chords)
+        bar_phase = (t % 6.0) / 6.0
         swell = math.sin(math.pi * bar_phase) ** 0.65
-        sample = 0.08 * math.sin(2.0 * math.pi * 36.71 * t)
+        sample = 0.065 * math.sin(2.0 * math.pi * chords[bar][0] * 0.5 * t)
         for tone_index, frequency in enumerate(chords[bar]):
-            phase = tone_index * 0.8
-            sample += 0.09 * swell * math.sin(2.0 * math.pi * frequency * t + phase)
-            sample += 0.025 * swell * math.sin(2.0 * math.pi * frequency * 2.0 * t + phase)
+            phase = tone_index * 0.72
+            sample += 0.07 * (0.45 + 0.55 * swell) * math.sin(2.0 * math.pi * frequency * t + phase)
 
-        note_length = 2.0
+        pulse_length = 0.5
+        pulse_index = int(t / pulse_length)
+        pulse_time = t % pulse_length
+        arpeggio_frequency = chords[bar][pulse_index % len(chords)] * 2.0
+        pulse_envelope = min(1.0, pulse_time / 0.025) * math.exp(-4.2 * pulse_time)
+        sample += 0.18 * pulse_envelope * math.sin(2.0 * math.pi * arpeggio_frequency * t)
+        sample += 0.045 * pulse_envelope * math.sin(2.0 * math.pi * arpeggio_frequency * 2.0 * t)
+
+        note_length = 1.5
         note_index = int(t / note_length) % len(melody)
         note_phase = (t % note_length) / note_length
         note_envelope = math.sin(math.pi * note_phase) ** 2
-        sample += 0.055 * note_envelope * math.sin(2.0 * math.pi * melody[note_index] * t)
+        sample += 0.085 * note_envelope * math.sin(2.0 * math.pi * melody[note_index] * t)
 
         shimmer = 0.5 + 0.5 * math.sin(2.0 * math.pi * 0.07 * t)
-        sample += 0.018 * shimmer * math.sin(2.0 * math.pi * 523.25 * t + 0.7)
-        edge_fade = min(1.0, t / 0.12, (duration - t) / 0.12)
+        sample += 0.025 * shimmer * math.sin(2.0 * math.pi * 783.99 * t + 0.7)
+        edge_fade = min(1.0, t / 0.18, (duration - t) / 0.18)
         result.append(sample * max(0.0, edge_fade))
-    return result
+    return normalize_peak(result)
 
 
 def enemy_hit() -> list[float]:

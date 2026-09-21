@@ -1,5 +1,6 @@
 extends Node
 
+const MUSIC_VOLUME_DB := 1.0
 const BACKGROUND_MUSIC := preload("res://assets/audio/underwater_ambient.wav")
 const ENEMY_HIT_SOUND := preload("res://assets/audio/enemy_hit.wav")
 const STOMP_SOUND := preload("res://assets/audio/enemy_stomp.wav")
@@ -16,15 +17,23 @@ var _next_sfx_player := 0
 
 
 func _ready() -> void:
+	# The level-introduction panel pauses the scene tree.  Keep the global audio
+	# manager alive so the music is already audible while that panel is open and
+	# remains uninterrupted when changing levels.
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	var master_bus := AudioServer.get_bus_index("Master")
+	if master_bus >= 0:
+		AudioServer.set_bus_mute(master_bus, false)
+		AudioServer.set_bus_volume_db(master_bus, 0.0)
 	_music_player = AudioStreamPlayer.new()
 	_music_player.name = "BackgroundMusic"
-	_music_player.volume_db = -6.0
+	_music_player.process_mode = Node.PROCESS_MODE_ALWAYS
+	_music_player.volume_db = MUSIC_VOLUME_DB
+	_music_player.bus = "Master"
 	add_child(_music_player)
 
-	var music_stream := BACKGROUND_MUSIC.duplicate()
-	if music_stream is AudioStreamWAV:
-		music_stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
-	_music_player.stream = music_stream
+	_music_player.stream = BACKGROUND_MUSIC
+	_music_player.finished.connect(_on_music_finished)
 
 	for index in range(8):
 		var player := AudioStreamPlayer.new()
@@ -33,6 +42,12 @@ func _ready() -> void:
 		add_child(player)
 		_sfx_players.append(player)
 
+	_music_player.play()
+
+
+func _on_music_finished() -> void:
+	# Restart from the finished signal instead of mutating the imported WAV's
+	# loop mode, which can stall playback at the first frame in Godot 4.7.
 	_music_player.play()
 
 
