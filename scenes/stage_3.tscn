@@ -73,46 +73,35 @@ stretch_mode = 6
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=736664365]
 script = ExtResource("3_kh3lr")
+level_number = 3
 
 [node name="Panel" type="ColorRect" parent="HUD" unique_id=1149699230]
 offset_left = 24.0
 offset_top = 22.0
-offset_right = 494.0
-offset_bottom = 206.0
+offset_right = 462.0
+offset_bottom = 110.0
 mouse_filter = 2
 color = Color(0.01, 0.07, 0.12, 0.78)
 
-[node name="Title" type="Label" parent="HUD/Panel" unique_id=1533963115]
+[node name="Level" type="Label" parent="HUD/Panel" unique_id=1533963115]
 layout_mode = 0
 offset_left = 18.0
-offset_top = 10.0
+offset_top = 9.0
 offset_right = 413.0
-offset_bottom = 38.0
+offset_bottom = 34.0
 theme_override_colors/font_color = Color(0.9490196, 0.84313726, 0.35686275, 1)
-theme_override_font_sizes/font_size = 20
-text = "3 · TEMPLE GARDEN"
+theme_override_font_sizes/font_size = 18
+text = "LEVEL 3"
 
 [node name="Status" type="Label" parent="HUD/Panel" unique_id=1829510215]
 layout_mode = 0
 offset_left = 18.0
-offset_top = 43.0
-offset_right = 448.0
-offset_bottom = 117.0
+offset_top = 42.0
+offset_right = 420.0
+offset_bottom = 72.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 18
-text = "LIFE  ♥♥♥
-COINS  00    DIAMONDS  00"
-
-[node name="Controls" type="Label" parent="HUD/Panel" unique_id=947811603]
-layout_mode = 0
-offset_left = 18.0
-offset_top = 125.0
-offset_right = 448.0
-offset_bottom = 169.0
-theme_override_colors/font_color = Color(0.9019608, 0.96862745, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "A/D Move · W Triple jump · S Dive
-N Pick/drop · M Attack"
+text = "LIFE  ♥♥♥    COINS  00    DIAMONDS  00"
 
 [node name="Checkpoints" type="Node2D" parent="." unique_id=1914713146]
 

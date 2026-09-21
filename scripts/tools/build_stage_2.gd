@@ -93,8 +93,8 @@ func _build() -> void:
 		add_owned(stage, copy)
 		own_children(copy)
 	original.free()
-	stage.get_node("HUD/Panel/Title").text = "2 · CORAL STEPS · 0%"
-	stage.get_node("HUD/Panel/Controls").text = "A/D Move · W Triple jump · S Dive\nN Pick/drop · M Attack · Beacons save progress"
+	stage.get_node("HUD").level_number = 2
+	stage.get_node("HUD/Panel/Level").text = "LEVEL 2"
 	terrain = TileMapLayer.new()
 	terrain.name = "Terrain"
 	terrain.tile_set = load("res://assets/tilesets/underwater_tileset.tres")

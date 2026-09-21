@@ -19,6 +19,7 @@
 [ext_resource type="PackedScene" path="res://scenes/items/stone_sword_pickup.tscn" id="24_sword"]
 [ext_resource type="PackedScene" path="res://scenes/props/breakable_barrel.tscn" id="25_barrel"]
 [ext_resource type="PackedScene" path="res://scenes/tutorial_mechanics.tscn" id="26_tutorial"]
+[ext_resource type="PackedScene" path="res://scenes/ui/tutorial_intro_panel.tscn" id="27_intro"]
 
 [node name="Stage1" type="Node2D" unique_id=275439366]
 
@@ -178,47 +179,37 @@ polygon = PackedVector2Array(-20, -30, -13, -92, -7, -130, 0, -151, 9, -126, 15,
 [node name="WaterHighlight" parent="MechanicTutorial/TutorialVent/Jet" parent_id_path=PackedInt32Array(1366781045, 1899754508) index="1" unique_id=1056353616]
 points = PackedVector2Array(-5, -38, -2, -78, 2, -116, -3, -128, 0, -140)
 
+[node name="TutorialIntro" parent="." instance=ExtResource("27_intro")]
+
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1131384739]
 script = ExtResource("19_gi632")
 
 [node name="Panel" type="ColorRect" parent="HUD" unique_id=548074111]
 offset_left = 24.0
 offset_top = 22.0
-offset_right = 494.0
-offset_bottom = 206.0
+offset_right = 462.0
+offset_bottom = 110.0
 mouse_filter = 2
 color = Color(0.01, 0.07, 0.12, 0.78)
 
-[node name="Title" type="Label" parent="HUD/Panel" unique_id=1356524762]
+[node name="Level" type="Label" parent="HUD/Panel" unique_id=1356524762]
 layout_mode = 0
 offset_left = 18.0
-offset_top = 10.0
+offset_top = 9.0
 offset_right = 413.0
-offset_bottom = 38.0
+offset_bottom = 34.0
 theme_override_colors/font_color = Color(0.9490196, 0.84313726, 0.35686275, 1)
-theme_override_font_sizes/font_size = 20
-text = "UNDERWATER WORLD - STAGE 1 DRAFT"
+theme_override_font_sizes/font_size = 18
+text = "LEVEL 1"
 
 [node name="Status" type="Label" parent="HUD/Panel" unique_id=782291619]
 layout_mode = 0
 offset_left = 18.0
-offset_top = 43.0
-offset_right = 448.0
-offset_bottom = 117.0
+offset_top = 42.0
+offset_right = 420.0
+offset_bottom = 72.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 18
-text = "LIFE  ♥♥♥
-COINS  00    DIAMONDS  00"
-
-[node name="Controls" type="Label" parent="HUD/Panel" unique_id=131632658]
-layout_mode = 0
-offset_left = 18.0
-offset_top = 125.0
-offset_right = 448.0
-offset_bottom = 169.0
-theme_override_colors/font_color = Color(0.9019608, 0.96862745, 1, 1)
-theme_override_font_sizes/font_size = 16
-text = "A/D: Move    W: Triple swim    S: Fast dive
-N: Pick up / drop item    M: Sword attack"
+text = "LIFE  ♥♥♥    COINS  00    DIAMONDS  00"
 
 [editable path="MechanicTutorial"]

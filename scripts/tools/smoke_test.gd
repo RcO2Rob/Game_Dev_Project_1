@@ -10,6 +10,14 @@ func _run() -> void:
 	root.add_child(stage)
 	current_scene = stage
 	await process_frame
+	var tutorial_intro := stage.get_node("TutorialIntro")
+	assert(paused and tutorial_intro.visible)
+	assert("TUTORIAL LEVEL" in tutorial_intro.get_node("Content/Panel/Margin/VBox/Title").text)
+	tutorial_intro.dismiss()
+	assert(not paused and not tutorial_intro.visible)
+	assert(InputMap.action_get_events("swim")[0].physical_keycode == KEY_SPACE)
+	assert(stage.get_node("HUD/Panel/Level").text == "LEVEL 1")
+	assert(stage.get_node_or_null("HUD/Panel/Controls") == null)
 	assert(stage.get_node_or_null("MechanicTutorial/TutorialCurrent") == null)
 	assert(stage.get_node("MechanicTutorial/TutorialMovingReef") != null)
 	assert(stage.get_node("MechanicTutorial/TutorialVent") != null)

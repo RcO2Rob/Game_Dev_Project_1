@@ -1,0 +1,86 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/tutorial_intro.gd" id="1_intro"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_panel"]
+bg_color = Color(0.015, 0.105, 0.17, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.2, 0.78, 0.92, 0.9)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[node name="TutorialIntro" type="CanvasLayer"]
+layer = 40
+script = ExtResource("1_intro")
+
+[node name="Content" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Dim" type="ColorRect" parent="Content"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0.04, 0.08, 0.42)
+
+[node name="Panel" type="PanelContainer" parent="Content"]
+layout_mode = 0
+offset_left = 311.0
+offset_top = 168.0
+offset_right = 841.0
+offset_bottom = 480.0
+theme_override_styles/panel = SubResource("StyleBox_panel")
+
+[node name="Margin" type="MarginContainer" parent="Content/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 34
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 34
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="Content/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 13
+alignment = 1
+
+[node name="Title" type="Label" parent="Content/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.84, 0.3, 1)
+theme_override_font_sizes/font_size = 30
+text = "TUTORIAL LEVEL"
+horizontal_alignment = 1
+
+[node name="Message" type="Label" parent="Content/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.84, 0.96, 1, 1)
+theme_override_font_sizes/font_size = 17
+text = "Learn each underwater mechanic here.\nLater levels will combine them in harder ways."
+horizontal_alignment = 1
+
+[node name="Controls" type="Label" parent="Content/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 17
+text = "A / D   Move       SPACE   Triple jump       S   Dive\nN   Pick up / drop item       M   Sword attack"
+horizontal_alignment = 1
+
+[node name="Continue" type="Label" parent="Content/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.38, 0.94, 0.75, 1)
+theme_override_font_sizes/font_size = 18
+text = "Press SPACE to begin"
+horizontal_alignment = 1

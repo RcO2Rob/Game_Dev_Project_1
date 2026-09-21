@@ -1,7 +1,6 @@
 extends Node2D
 
 const WIDTH := 21504.0
-const ZONES := ["TEMPLE GARDEN", "CORAL PASSAGE", "DRIFTING REEFS", "STEAM VAULT", "SILENT CHASM", "HEART OF THE SEA"]
 var elapsed := 0.0
 var checkpoint_x := 0.0
 var completed := false
@@ -17,8 +16,6 @@ func _process(delta: float) -> void:
 	if completed:
 		return
 	elapsed += delta
-	var zone := clampi(int($Player.position.x / 3584.0), 0, 5)
-	$HUD/Panel/Title.text = "3 · %s · %d%%" % [ZONES[zone], clampi(int($Player.position.x / (WIDTH - 200) * 100), 0, 99)]
 
 func _checkpoint(body: Node2D, marker: Area2D) -> void:
 	if body != $Player or marker.position.x <= checkpoint_x or completed:

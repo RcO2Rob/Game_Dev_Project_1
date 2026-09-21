@@ -240,37 +240,28 @@ func _add_hud(root: Node2D) -> void:
 	var panel := ColorRect.new()
 	panel.name = "Panel"
 	panel.position = Vector2(24, 22)
-	panel.size = Vector2(470, 184)
+	panel.size = Vector2(438, 88)
 	panel.color = Color(0.01, 0.07, 0.12, 0.78)
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_add_owned(hud, panel, root)
 
-	var title := Label.new()
-	title.name = "Title"
-	title.position = Vector2(18, 10)
-	title.size = Vector2(395, 28)
-	title.text = "UNDERWATER WORLD - STAGE 1 DRAFT"
-	title.add_theme_font_size_override("font_size", 20)
-	title.add_theme_color_override("font_color", Color("f2d75b"))
-	_add_owned(panel, title, root)
+	var level := Label.new()
+	level.name = "Level"
+	level.position = Vector2(18, 9)
+	level.size = Vector2(395, 25)
+	level.text = "LEVEL 1"
+	level.add_theme_font_size_override("font_size", 18)
+	level.add_theme_color_override("font_color", Color("f2d75b"))
+	_add_owned(panel, level, root)
 
 	var status := Label.new()
 	status.name = "Status"
-	status.position = Vector2(18, 43)
-	status.size = Vector2(430, 74)
-	status.text = "LIFE  ♥♥♥\nCOINS  00    DIAMONDS  00"
+	status.position = Vector2(18, 42)
+	status.size = Vector2(410, 30)
+	status.text = "LIFE  ♥♥♥    COINS  00    DIAMONDS  00"
 	status.add_theme_font_size_override("font_size", 18)
 	status.add_theme_color_override("font_color", Color("ffffff"))
 	_add_owned(panel, status, root)
-
-	var controls := Label.new()
-	controls.name = "Controls"
-	controls.position = Vector2(18, 125)
-	controls.size = Vector2(430, 44)
-	controls.text = "A/D: Move    W: Triple swim    S: Fast dive\nN: Pick up / throw nearby rock"
-	controls.add_theme_font_size_override("font_size", 16)
-	controls.add_theme_color_override("font_color", Color("e6f7ff"))
-	_add_owned(panel, controls, root)
 
 
 func _add_owned(parent: Node, child: Node, owner: Node) -> void:

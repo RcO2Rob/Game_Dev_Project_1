@@ -46,7 +46,8 @@ func run() -> void:
 	assert(player.current_health == 5 and player.max_health == 5 and player.has_sword)
 	assert(root.get_node("RunState").pending.is_empty())
 	assert(player.get_node("Camera2D").limit_right == 21504)
-	assert("Shop" not in stage.get_node("HUD/Panel/Controls").text)
+	assert(stage.get_node("HUD/Panel/Level").text == "LEVEL 3")
+	assert(stage.get_node_or_null("HUD/Panel/Controls") == null)
 	assert(stage.find_children("Current*", "Area2D", true, false).is_empty())
 	for shop_name in ["DiamondShop1", "DiamondShop2", "DiamondShop3"]:
 		assert(stage.get_node_or_null(shop_name) == null, "In-level shops must be removed from Stage 3")

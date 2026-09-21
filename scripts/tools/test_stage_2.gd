@@ -9,6 +9,8 @@ func run() -> void:
 	current_scene = stage
 	await physics_frame
 	await physics_frame
+	assert(stage.get_node("HUD/Panel/Level").text == "LEVEL 2")
+	assert(stage.get_node_or_null("HUD/Panel/Controls") == null)
 	var player: CharacterBody2D = stage.get_node("Player")
 	assert(player.get_node("Camera2D").limit_right == 15360)
 	var terrain: TileMapLayer = stage.get_node("Terrain")

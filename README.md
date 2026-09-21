@@ -10,7 +10,7 @@ See [the game design document](docs/GAME_DESIGN.md) for controls, rules, level p
 
 ## Development
 
-Open `project.godot` in Godot and run the project. Use A/D to move, W to swim upward, S to dive quickly, and N to pick up or throw a nearby rock.
+Open `project.godot` in Godot and run the project. Use A/D to move, Space to swim upward, S to dive quickly, and N to pick up or throw a nearby rock.
 
 ## Releases
 

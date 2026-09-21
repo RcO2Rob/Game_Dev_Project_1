@@ -92,8 +92,8 @@ func build() -> void:
 		own(stage, copy)
 		own_descendants(copy)
 	stage.get_node("BackgroundLayer/UnderwaterBackground").modulate = Color(0.65, 0.77, 0.87)
-	stage.get_node("HUD/Panel/Title").text = "3 · TEMPLE GARDEN"
-	stage.get_node("HUD/Panel/Controls").text = "A/D Move · W Triple jump · S Dive\nN Pick/drop · M Attack"
+	stage.get_node("HUD").level_number = 3
+	stage.get_node("HUD/Panel/Level").text = "LEVEL 3"
 	var checkpoints := Node2D.new()
 	checkpoints.name = "Checkpoints"
 	own(stage, checkpoints)

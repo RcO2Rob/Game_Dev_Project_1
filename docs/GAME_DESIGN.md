@@ -9,7 +9,7 @@ The movement is inspired by underwater levels in platform games, but I want to a
 ## Controls
 
 - A/D: move
-- W: swim upward
+- Space: swim upward
 - S: fast dive
 - N: pick up or throw a nearby rock
 - Escape: pause
