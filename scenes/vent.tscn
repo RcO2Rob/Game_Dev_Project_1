@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://2wduwod3tavy"]
+
+[ext_resource type="Script" uid="uid://buu5w03u8nshb" path="res://scripts/timed_vent.gd" id="1_cp5ku"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0ne4k"]
+size = Vector2(44, 108)
+
+[node name="Vent387" type="Area2D" unique_id=1658256218]
+collision_layer = 0
+script = ExtResource("1_cp5ku")
+phase_offset = 2.4000000000000004
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=851750284]
+position = Vector2(0, -54)
+shape = SubResource("RectangleShape2D_0ne4k")
+
+[node name="Jet" type="Polygon2D" parent="." unique_id=149399550]
+color = Color(0.4862745, 0.9607843, 0.89411765, 1)
+polygon = PackedVector2Array(-22, 0, -14, -161, 0, -236, 17, -160, 22, 0)
+
+[node name="Base" type="Polygon2D" parent="." unique_id=2121438202]
+position = Vector2(0, -6)
+color = Color(0.1882353, 0.28627452, 0.32941177, 1)
+polygon = PackedVector2Array(-25, -6, 25, -6, 25, 6, -25, 6)
+
+[node name="Warning" type="Label" parent="." unique_id=1471839845]
+offset_left = -31.0
+offset_top = -273.0
+offset_right = 38.0
+offset_bottom = -253.0
+theme_override_colors/font_color = Color(0.7058824, 0.92941177, 0.90588236, 1)
+theme_override_font_sizes/font_size = 14
+text = "WAIT / GO"

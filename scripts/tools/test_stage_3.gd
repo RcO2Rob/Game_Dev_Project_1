@@ -82,13 +82,18 @@ func run() -> void:
 	assert(player.current_health == 5 and player.max_health == 5)
 	assert(player.position == Vector2(18080, 544))
 	# Jet telegraph and active phase use the same clock as the real damage area.
-	var vent := stage.get_node("Vent349")
+	var vents := stage.find_children("Vent*", "Area2D", false, false)
+	assert(not vents.is_empty(), "Stage 3 must contain at least one timed water jet")
+	var vent := vents[0]
+	var original_phase_offset: float = vent.phase_offset
+	vent.phase_offset = 0.0
 	vent._time = 0
 	vent._physics_process(0.1)
 	assert(not vent.active)
 	vent._time = 3.4
 	vent._physics_process(0.1)
 	assert(vent.active)
+	vent.phase_offset = original_phase_offset
 	player.position = Vector2(21240, 520)
 	for frame in range(6):
 		await physics_frame

@@ -14,6 +14,7 @@ func _run() -> void:
 	assert(paused and tutorial_intro.visible)
 	assert("TUTORIAL LEVEL" in tutorial_intro.get_node("Content/Panel/Margin/VBox/Title").text)
 	assert("Sea creatures and large bubbles are dangerous" in tutorial_intro.get_node("Content/Panel/Margin/VBox/Message").text)
+	assert("Water jets hurt when active" in tutorial_intro.get_node("Content/Panel/Margin/VBox/Message").text)
 	tutorial_intro.dismiss()
 	assert(not paused and not tutorial_intro.visible)
 	assert(InputMap.action_get_events("swim")[0].physical_keycode == KEY_SPACE)
