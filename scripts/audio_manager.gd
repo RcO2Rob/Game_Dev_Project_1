@@ -10,6 +10,7 @@ const DIAMOND_PICKUP_SOUND := preload("res://assets/audio/diamond_pickup.wav")
 const WEAPON_PICKUP_SOUND := preload("res://assets/audio/weapon_pickup.wav")
 const SWORD_SWING_SOUND := preload("res://assets/audio/sword_swing.wav")
 const BARREL_BREAK_SOUND := preload("res://assets/audio/barrel_break.wav")
+const CONCH_ENTER_SOUND := preload("res://assets/audio/conch_enter.wav")
 
 var _music_player: AudioStreamPlayer
 var _sfx_players: Array[AudioStreamPlayer] = []
@@ -81,6 +82,10 @@ func play_sword_swing() -> void:
 
 func play_barrel_break() -> void:
 	_play_sound(BARREL_BREAK_SOUND, randf_range(0.94, 1.02))
+
+
+func play_conch_enter() -> void:
+	_play_sound(CONCH_ENTER_SOUND, 1.0)
 
 
 func _play_sound(stream: AudioStream, pitch: float = 1.0) -> void:

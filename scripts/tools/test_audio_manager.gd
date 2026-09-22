@@ -14,6 +14,10 @@ func _run() -> void:
 	assert(music_player.process_mode == Node.PROCESS_MODE_ALWAYS)
 	assert(music_player.volume_db == audio_manager.MUSIC_VOLUME_DB)
 	assert(music_player.finished.is_connected(audio_manager._on_music_finished))
+	assert(audio_manager.CONCH_ENTER_SOUND != null)
+	audio_manager.play_conch_enter()
+	assert(audio_manager._sfx_players[0].stream == audio_manager.CONCH_ENTER_SOUND)
+	assert(audio_manager._sfx_players[0].playing)
 
 	paused = true
 	await process_frame

@@ -48,4 +48,7 @@ func _on_body_entered(body: Node) -> void:
 		return
 	_transitioning = true
 	set_deferred("monitoring", false)
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager:
+		audio_manager.play_conch_enter()
 	get_node("/root/EndShop").call_deferred("open_shop", body, next_scene)

@@ -8,8 +8,8 @@ func run() -> void:
 	root.add_child(stage2)
 	current_scene = stage2
 	await process_frame
-	stage2.get_node("Player").coin_count = 17
-	stage2.get_node("Player").diamond_count = 15
+	stage2.get_node("Player").coin_count = 60
+	stage2.get_node("Player").diamond_count = 2
 	stage2.get_node("Player").current_health = 2
 	stage2._finish(stage2.get_node("Player"))
 	await process_frame
@@ -24,16 +24,20 @@ func run() -> void:
 		await process_frame
 	if platform2:
 		assert(platform2.position == stopped2, "Buying must pause moving hazards")
-	assert(end_shop.purchase("heal"))
 	var stage2_player: CharacterBody2D = stage2.get_node("Player")
-	assert(stage2_player.current_health == 3 and stage2_player.diamond_count == 14)
+	assert(not end_shop.purchase("heart"), "Permanent health must never accept coins")
+	assert(stage2_player.coin_count == 60 and stage2_player.diamond_count == 2)
+	stage2_player.diamond_count = 15
+	end_shop._refresh()
+	assert(end_shop.purchase("heal"))
+	assert(stage2_player.current_health == 3 and stage2_player.coin_count == 40 and stage2_player.diamond_count == 15)
 	assert(not end_shop.purchase("heal"))
 	assert(end_shop.purchase("heart"))
 	assert(end_shop.purchase("heart"))
-	assert(stage2_player.max_health == 5 and stage2_player.current_health == 5 and stage2_player.diamond_count == 8)
+	assert(stage2_player.max_health == 5 and stage2_player.current_health == 5 and stage2_player.diamond_count == 9)
 	assert(not end_shop.purchase("heart"))
 	assert(end_shop.purchase("sword"))
-	assert(stage2_player.has_sword and stage2_player.diamond_count == 6)
+	assert(stage2_player.has_sword and stage2_player.coin_count == 0 and stage2_player.diamond_count == 9)
 	assert(stage2_player.sword_kind == "stone")
 	assert(stage2_player.sword_durability == 15 and stage2_player.sword_max_durability == 15)
 	assert(not end_shop.purchase("sword"))
@@ -44,7 +48,7 @@ func run() -> void:
 	var stage := current_scene
 	assert(stage.scene_file_path == "res://scenes/stage_3.tscn")
 	var player: CharacterBody2D = stage.get_node("Player")
-	assert(player.coin_count == 17 and player.diamond_count == 6)
+	assert(player.coin_count == 0 and player.diamond_count == 9)
 	assert(player.current_health == 5 and player.max_health == 5 and player.has_sword)
 	assert(player.sword_kind == "stone" and player.sword_durability == 15)
 	assert(root.get_node("RunState").pending.is_empty())

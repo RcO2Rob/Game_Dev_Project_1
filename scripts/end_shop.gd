@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 const ICON_SCRIPT := preload("res://scripts/shop_icon.gd")
+const COINS_PER_DIAMOND := 20
 var buyer: CharacterBody2D
 var destination := ""
 var finish_callback := Callable()
@@ -36,7 +37,10 @@ func purchase(kind: String) -> bool:
 	if not kinds.has(kind):
 		return false
 	var price: int = {"sword": 2, "heal": 1, "heart": 3}[kind]
-	if buyer.diamond_count < price:
+	var coin_price := price * COINS_PER_DIAMOND
+	var can_pay_coins: bool = kind != "heart" and buyer.coin_count >= coin_price
+	var can_pay_diamonds: bool = buyer.diamond_count >= price
+	if not can_pay_coins and not can_pay_diamonds:
 		_flash(cards[kinds.find(kind)], false)
 		return false
 	if kind == "sword":
@@ -51,7 +55,12 @@ func purchase(kind: String) -> bool:
 		buyer.current_health += 1
 	else:
 		return false
-	buyer.diamond_count -= price
+	# Coins are spent first so diamonds remain available for the permanent
+	# maximum-health upgrade, which never accepts coins.
+	if can_pay_coins:
+		buyer.coin_count -= coin_price
+	else:
+		buyer.diamond_count -= price
 	_flash(cards[kinds.find(kind)], true)
 	_refresh()
 	return true
@@ -78,9 +87,9 @@ func _hide_shop() -> void:
 	finish_callback = Callable()
 
 func _refresh() -> void:
-	balance_icon.set_status(buyer.diamond_count, buyer.current_health, buyer.max_health)
-	cards[0].disabled = buyer.has_sword or buyer.diamond_count < 2
-	cards[1].disabled = buyer.current_health >= buyer.max_health or buyer.diamond_count < 1
+	balance_icon.set_status(buyer.coin_count, buyer.diamond_count, buyer.current_health, buyer.max_health)
+	cards[0].disabled = buyer.has_sword or (buyer.diamond_count < 2 and buyer.coin_count < 40)
+	cards[1].disabled = buyer.current_health >= buyer.max_health or (buyer.diamond_count < 1 and buyer.coin_count < 20)
 	cards[2].disabled = buyer.max_health >= 5 or buyer.diamond_count < 3
 
 func _flash(card: Button, success: bool) -> void:
@@ -94,7 +103,7 @@ func _card(kind: String, price: int) -> Button:
 	button.text = ""
 	var icon := ICON_SCRIPT.new()
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	icon.configure(kind, price)
+	icon.configure(kind, price, price * COINS_PER_DIAMOND if kind != "heart_up" else 0)
 	button.add_child(icon)
 	icon.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var descriptions := {

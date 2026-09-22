@@ -37,7 +37,8 @@ func _run() -> void:
 	audio_manager.play_weapon_pickup()
 	audio_manager.play_sword_swing()
 	audio_manager.play_barrel_break()
-	assert(audio_manager._next_sfx_player == 0)
+	audio_manager.play_conch_enter()
+	assert(audio_manager._next_sfx_player == 1)
 
 	var player := stage.get_node("Player")
 	assert(player.current_health == 3)
@@ -248,6 +249,10 @@ func _run() -> void:
 	await process_frame
 	var end_shop := root.get_node("EndShop")
 	assert(paused and end_shop.opened)
+	assert(end_shop.balance_icon.coins == player.coin_count)
+	assert(end_shop.cards[0].get_child(0).coin_price == 40)
+	assert(end_shop.cards[1].get_child(0).coin_price == 20)
+	assert(end_shop.cards[2].get_child(0).coin_price == 0)
 	for button in end_shop.find_children("*", "Button", true, false):
 		assert(button.text.is_empty(), "End shop must communicate with icons, not button text")
 	assert(end_shop.cards[0].get_node("Description").text == "STONE SWORD · 15 HITS")

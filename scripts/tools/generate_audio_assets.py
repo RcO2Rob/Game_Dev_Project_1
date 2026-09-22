@@ -193,6 +193,29 @@ def barrel_break() -> list[float]:
     return result
 
 
+def conch_enter() -> list[float]:
+    """A bright rising shell chime for completing a level."""
+    duration = 0.85
+    notes = ((0.0, 392.0), (0.14, 523.25), (0.28, 659.25), (0.42, 783.99))
+    result: list[float] = []
+    for index in range(int(duration * SAMPLE_RATE)):
+        t = index / SAMPLE_RATE
+        sample = 0.0
+        for start, frequency in notes:
+            if t < start:
+                continue
+            local_time = t - start
+            attack = min(1.0, local_time / 0.018)
+            decay = math.exp(-4.8 * local_time)
+            shimmer = 1.0 + 0.004 * math.sin(2.0 * math.pi * 5.0 * local_time)
+            sample += math.sin(2.0 * math.pi * frequency * shimmer * local_time) * attack * decay * 0.26
+            sample += math.sin(2.0 * math.pi * frequency * 2.0 * local_time) * attack * decay * 0.07
+        bubble_frequency = 220.0 + 620.0 * min(t / duration, 1.0)
+        bubble = math.sin(2.0 * math.pi * bubble_frequency * t) * math.sin(math.pi * t / duration) ** 2
+        result.append(sample + bubble * 0.08)
+    return normalize_peak(result, 0.82)
+
+
 def main() -> None:
     write_wav("underwater_ambient.wav", underwater_ambient())
     write_wav("enemy_hit.wav", enemy_hit())
@@ -203,6 +226,7 @@ def main() -> None:
     write_wav("weapon_pickup.wav", weapon_pickup())
     write_wav("sword_swing.wav", sword_swing())
     write_wav("barrel_break.wav", barrel_break())
+    write_wav("conch_enter.wav", conch_enter())
     print(f"Generated audio assets in {OUTPUT_DIR}")
 
 

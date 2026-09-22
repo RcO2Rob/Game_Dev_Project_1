@@ -2,16 +2,20 @@ extends Control
 
 var kind := "sword"
 var price := 0
+var coin_price := 0
+var coins := 0
 var diamonds := 0
 var health := 3
 var max_health := 3
 
-func configure(new_kind: String, new_price := 0) -> void:
+func configure(new_kind: String, new_price := 0, new_coin_price := 0) -> void:
 	kind = new_kind
 	price = new_price
+	coin_price = new_coin_price
 	queue_redraw()
 
-func set_status(new_diamonds: int, new_health: int, new_max_health: int) -> void:
+func set_status(new_coins: int, new_diamonds: int, new_health: int, new_max_health: int) -> void:
+	coins = new_coins
 	diamonds = new_diamonds
 	health = new_health
 	max_health = new_max_health
@@ -40,18 +44,37 @@ func _draw() -> void:
 		draw_colored_polygon(PackedVector2Array([c + Vector2(70, -27), c + Vector2(93, -10), c + Vector2(70, 7)]), Color("d9fff7"))
 
 func _draw_balance() -> void:
-	for i in range(mini(diamonds, 34)):
-		var column := i % 17
-		var row := i / 17
-		_draw_diamond(Vector2(22 + column * 25, 20 + row * 28), 8)
+	var font := ThemeDB.fallback_font
+	_draw_coin(Vector2(28, 35), 11)
+	draw_string(font, Vector2(48, 43), str(coins), HORIZONTAL_ALIGNMENT_LEFT, 90, 22, Color("ffd98b"))
+	_draw_diamond(Vector2(164, 35), 10)
+	draw_string(font, Vector2(184, 43), str(diamonds), HORIZONTAL_ALIGNMENT_LEFT, 90, 22, Color("a9fbff"))
+	draw_string(font, Vector2(302, 42), "1", HORIZONTAL_ALIGNMENT_LEFT, 18, 18, Color("d9fff7"))
+	_draw_diamond(Vector2(326, 35), 8)
+	draw_string(font, Vector2(340, 42), "=", HORIZONTAL_ALIGNMENT_LEFT, 18, 18, Color("d9fff7"))
+	draw_string(font, Vector2(362, 42), "20", HORIZONTAL_ALIGNMENT_LEFT, 28, 18, Color("d9fff7"))
+	_draw_coin(Vector2(400, 35), 8)
 	for i in range(max_health):
 		_draw_heart(Vector2(size.x - 145 + i * 28, 28), 0.55, i < health)
 
 func _draw_price(center: Vector2) -> void:
+	if coin_price > 0:
+		var font := ThemeDB.fallback_font
+		_draw_diamond(center + Vector2(-62, 0), 9)
+		draw_string(font, center + Vector2(-48, 7), str(price), HORIZONTAL_ALIGNMENT_LEFT, 24, 18, Color("c9feff"))
+		draw_string(font, center + Vector2(-20, 7), "/", HORIZONTAL_ALIGNMENT_LEFT, 16, 18, Color("d9fff7"))
+		_draw_coin(center + Vector2(8, 0), 9)
+		draw_string(font, center + Vector2(22, 7), str(coin_price), HORIZONTAL_ALIGNMENT_LEFT, 48, 18, Color("ffe3a3"))
+		return
 	var spacing := 28.0
 	var start := center.x - float(price - 1) * spacing * 0.5
 	for i in range(price):
 		_draw_diamond(Vector2(start + i * spacing, center.y), 10)
+
+func _draw_coin(center: Vector2, radius: float) -> void:
+	draw_circle(center, radius, Color("f6bd45"))
+	draw_circle(center, radius * 0.67, Color("d98a24"))
+	draw_arc(center, radius * 0.67, 0.0, TAU, 20, Color("ffe79a"), 2.0, true)
 
 func _draw_diamond(center: Vector2, radius: float) -> void:
 	draw_colored_polygon(PackedVector2Array([center + Vector2(0, -radius), center + Vector2(radius * 0.8, 0), center + Vector2(0, radius), center + Vector2(-radius * 0.8, 0)]), Color("55edf2"))
