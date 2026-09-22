@@ -5,6 +5,7 @@
 # Local export output
 builds/
 exports/
+output/
 
 # Platform and editor files
 .DS_Store
@@ -14,4 +15,3 @@ Thumbs.db
 
 # Local review/scratch files
 tmp/
-
