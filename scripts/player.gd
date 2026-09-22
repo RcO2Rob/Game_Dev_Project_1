@@ -1,6 +1,9 @@
 extends CharacterBody2D
 
-const SWORD_PICKUP_SCENE := preload("res://scenes/items/stone_sword_pickup.tscn")
+const WOOD_SWORD_PICKUP_SCENE := preload("res://scenes/items/wood_sword_pickup.tscn")
+const STONE_SWORD_PICKUP_SCENE := preload("res://scenes/items/stone_sword_pickup.tscn")
+const WOOD_SWORD_DURABILITY := 5
+const STONE_SWORD_DURABILITY := 15
 
 @export_category("Horizontal movement")
 @export var max_horizontal_speed := 210.0
@@ -44,6 +47,9 @@ var current_health := 3
 var coin_count := 0
 var diamond_count := 0
 var has_sword := false
+var sword_kind := ""
+var sword_durability := 0
+var sword_max_durability := 0
 
 
 func _ready() -> void:
@@ -157,13 +163,17 @@ func _unhandled_input(event: InputEvent) -> void:
 		attack_with_sword()
 
 
-func equip_sword() -> bool:
+func equip_sword(kind := "wood", durability := -1) -> bool:
 	if has_sword:
 		return false
 	if is_instance_valid(_held_rock):
 		_held_rock.drop_from_hand()
 		_held_rock = null
+	sword_kind = "stone" if kind == "stone" else "wood"
+	sword_max_durability = STONE_SWORD_DURABILITY if sword_kind == "stone" else WOOD_SWORD_DURABILITY
+	sword_durability = sword_max_durability if durability < 0 else clampi(durability, 1, sword_max_durability)
 	has_sword = true
+	_apply_sword_visual()
 	$Body/SwordPivot.visible = true
 	var audio_manager := get_node_or_null("/root/AudioManager")
 	if audio_manager:
@@ -174,10 +184,12 @@ func equip_sword() -> bool:
 func drop_sword() -> RigidBody2D:
 	if not has_sword or _is_attacking or _captured_in_bubble:
 		return null
-	has_sword = false
-	$Body/SwordPivot.visible = false
-	$Body/SwordPivot.rotation = -0.78
-	var dropped_sword := SWORD_PICKUP_SCENE.instantiate() as RigidBody2D
+	var dropped_kind := sword_kind
+	var dropped_durability := sword_durability
+	_clear_sword_state()
+	var sword_scene: PackedScene = STONE_SWORD_PICKUP_SCENE if dropped_kind == "stone" else WOOD_SWORD_PICKUP_SCENE
+	var dropped_sword := sword_scene.instantiate() as RigidBody2D
+	dropped_sword.set_weapon_state(dropped_kind, dropped_durability)
 	dropped_sword.position = position + Vector2(_facing * 46.0, -10.0)
 	get_parent().add_child(dropped_sword)
 	dropped_sword.set_pickup_delay(0.55)
@@ -188,12 +200,12 @@ func drop_sword() -> RigidBody2D:
 func lose_sword_on_damage() -> RigidBody2D:
 	if not has_sword:
 		return null
-	has_sword = false
-	_is_attacking = false
-	_sword_hit_targets.clear()
-	$Body/SwordPivot.visible = false
-	$Body/SwordPivot.rotation = -0.78
-	var lost_sword := SWORD_PICKUP_SCENE.instantiate() as RigidBody2D
+	var lost_kind := sword_kind
+	var lost_durability := sword_durability
+	_clear_sword_state()
+	var sword_scene: PackedScene = STONE_SWORD_PICKUP_SCENE if lost_kind == "stone" else WOOD_SWORD_PICKUP_SCENE
+	var lost_sword := sword_scene.instantiate() as RigidBody2D
+	lost_sword.set_weapon_state(lost_kind, lost_durability)
 	lost_sword.position = position + Vector2(_facing * 30.0, -12.0)
 	get_parent().add_child(lost_sword)
 	lost_sword.knock_away_and_disappear(Vector2(_facing * 180.0, -145.0))
@@ -230,6 +242,8 @@ func _on_sword_hitbox_area_entered(area: Area2D) -> void:
 
 
 func _damage_sword_overlaps() -> void:
+	if not has_sword:
+		return
 	var hitbox := $Body/SwordPivot/SwordHitbox
 	for body in hitbox.get_overlapping_bodies():
 		_try_sword_hit(body)
@@ -249,13 +263,52 @@ func _damage_sword_overlaps() -> void:
 
 
 func _try_sword_hit(target: Node) -> void:
-	if not _is_attacking or not target.has_method("hit_by_weapon"):
+	if not has_sword or not _is_attacking or not target.has_method("hit_by_weapon"):
 		return
 	var target_id := target.get_instance_id()
 	if _sword_hit_targets.has(target_id):
 		return
 	_sword_hit_targets[target_id] = true
+	var uses_durability := false
+	if target.is_in_group("enemy"):
+		uses_durability = not bool(target.get("_defeated"))
+	elif target.is_in_group("breakable_barrel"):
+		uses_durability = not bool(target.get("_broken"))
 	target.hit_by_weapon()
+	if uses_durability:
+		_consume_sword_durability()
+
+
+func _consume_sword_durability() -> void:
+	if not has_sword:
+		return
+	sword_durability = maxi(sword_durability - 1, 0)
+	if sword_durability == 0:
+		_clear_sword_state()
+
+
+func _clear_sword_state() -> void:
+	has_sword = false
+	sword_kind = ""
+	sword_durability = 0
+	sword_max_durability = 0
+	_is_attacking = false
+	_sword_hit_targets.clear()
+	$Body/SwordPivot.visible = false
+	$Body/SwordPivot.rotation = -0.78
+
+
+func _apply_sword_visual() -> void:
+	if sword_kind == "wood":
+		$Body/SwordPivot/Blade.color = Color("a96832")
+		$Body/SwordPivot/BladeEdge.default_color = Color("e6b875")
+		$Body/SwordPivot/Guard.color = Color("68401f")
+		$Body/SwordPivot/Handle.color = Color("3f2819")
+	else:
+		$Body/SwordPivot/Blade.color = Color(0.58, 0.66, 0.69, 1)
+		$Body/SwordPivot/BladeEdge.default_color = Color(0.88, 0.96, 0.97, 0.9)
+		$Body/SwordPivot/Guard.color = Color(0.2, 0.27, 0.29, 1)
+		$Body/SwordPivot/Handle.color = Color(0.39, 0.22, 0.12, 1)
 
 
 func _update_swim_buffer(delta: float) -> void:

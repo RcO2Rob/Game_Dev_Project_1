@@ -29,7 +29,9 @@ func _checkpoint_entered(body: Node2D, marker: Area2D) -> void:
 	body._spawn_position = marker.position + Vector2(60, -32)
 	body.current_health = body.max_health
 	marker.get_node("Lamp").modulate = Color(0.45, 1.0, 0.65)
-	marker.get_node("Label").text = "SAVED"
+	var checkpoint_label := marker.get_node_or_null("Label") as Label
+	if checkpoint_label:
+		checkpoint_label.text = "SAVED"
 
 
 func _chasm_entered(body: Node2D) -> void:

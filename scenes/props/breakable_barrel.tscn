@@ -5,7 +5,7 @@
 [sub_resource type="RectangleShape2D" id="Barrel_shape"]
 size = Vector2(35, 42)
 
-[node name="BreakableBarrel" type="StaticBody2D" groups=["sword_target"]]
+[node name="BreakableBarrel" type="StaticBody2D" groups=["breakable_barrel", "sword_target"]]
 collision_layer = 6
 collision_mask = 0
 script = ExtResource("1_barrel")

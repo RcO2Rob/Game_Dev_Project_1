@@ -22,22 +22,22 @@ func _draw() -> void:
 	if kind == "balance":
 		_draw_balance()
 	elif kind == "sword":
-		_draw_sword(c + Vector2(0, -14), 1.25)
-		_draw_price(c + Vector2(0, 54))
+		_draw_sword(c + Vector2(0, -30), 1.15)
+		_draw_price(c + Vector2(0, 30))
 	elif kind == "heal":
-		_draw_heart(c + Vector2(-12, -12), 1.4, true)
-		draw_rect(Rect2(c + Vector2(20, -22), Vector2(8, 30)), Color("b7ffe1"))
-		draw_rect(Rect2(c + Vector2(9, -11), Vector2(30, 8)), Color("b7ffe1"))
-		_draw_price(c + Vector2(0, 54))
+		_draw_heart(c + Vector2(-12, -28), 1.25, true)
+		draw_rect(Rect2(c + Vector2(18, -38), Vector2(8, 28)), Color("b7ffe1"))
+		draw_rect(Rect2(c + Vector2(8, -28), Vector2(28, 8)), Color("b7ffe1"))
+		_draw_price(c + Vector2(0, 30))
 	elif kind == "heart_up":
-		_draw_heart(c + Vector2(-14, -4), 1.2, true)
-		draw_colored_polygon(PackedVector2Array([c + Vector2(25, 2), c + Vector2(44, -20), c + Vector2(63, 2)]), Color("8ef1d6"))
-		draw_rect(Rect2(c + Vector2(39, 0), Vector2(10, 24)), Color("8ef1d6"))
-		_draw_price(c + Vector2(0, 54))
+		_draw_heart(c + Vector2(-14, -24), 1.08, true)
+		draw_colored_polygon(PackedVector2Array([c + Vector2(22, -18), c + Vector2(39, -39), c + Vector2(56, -18)]), Color("8ef1d6"))
+		draw_rect(Rect2(c + Vector2(34, -20), Vector2(10, 22)), Color("8ef1d6"))
+		_draw_price(c + Vector2(0, 30))
 	elif kind == "continue":
-		_draw_shell(c + Vector2(-22, 0))
-		draw_line(c + Vector2(28, 0), c + Vector2(70, 0), Color("d9fff7"), 8, true)
-		draw_colored_polygon(PackedVector2Array([c + Vector2(70, -17), c + Vector2(93, 0), c + Vector2(70, 17)]), Color("d9fff7"))
+		_draw_shell(c + Vector2(-22, -10))
+		draw_line(c + Vector2(28, -10), c + Vector2(70, -10), Color("d9fff7"), 8, true)
+		draw_colored_polygon(PackedVector2Array([c + Vector2(70, -27), c + Vector2(93, -10), c + Vector2(70, 7)]), Color("d9fff7"))
 
 func _draw_balance() -> void:
 	for i in range(mini(diamonds, 34)):

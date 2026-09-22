@@ -13,6 +13,7 @@ func _run() -> void:
 	var tutorial_intro := stage.get_node("TutorialIntro")
 	assert(paused and tutorial_intro.visible)
 	assert("TUTORIAL LEVEL" in tutorial_intro.get_node("Content/Panel/Margin/VBox/Title").text)
+	assert("Sea creatures and large bubbles are dangerous" in tutorial_intro.get_node("Content/Panel/Margin/VBox/Message").text)
 	tutorial_intro.dismiss()
 	assert(not paused and not tutorial_intro.visible)
 	assert(InputMap.action_get_events("swim")[0].physical_keycode == KEY_SPACE)
@@ -68,12 +69,17 @@ func _run() -> void:
 	assert(stage.get_node("StoneSwordPickup") != null)
 	assert(stage.get_node("BreakableBarrel") != null)
 	assert(stage.get_node("ConchExit") != null)
+	assert(stage.get_node("ConchExit/EntryHint/Message").text == "ENTER THE SHELL\nNEXT LEVEL")
 	assert(InputMap.has_action("attack"))
 	assert(stage.get_node("ConchExit").next_scene == "res://scenes/stage_2.tscn")
 	assert(ResourceLoader.exists("res://scenes/stage_2.tscn"))
 	assert(stage.get_node("CrabOne").collision_mask & 2 != 0)
 
 	var sword_pickup := stage.get_node("StoneSwordPickup")
+	assert(sword_pickup.weapon_kind == "wood" and sword_pickup.durability == 5)
+	var weapon_status := stage.get_node("HUD/Panel/WeaponStatus")
+	assert(not weapon_status.visible)
+	assert(weapon_status.position.y > stage.get_node("HUD/Panel").size.y, "Weapon durability HUD must sit below the main panel")
 	player.global_position = sword_pickup.global_position - Vector2(12, 0)
 	player.velocity = Vector2.ZERO
 	for _frame in range(3):
@@ -81,6 +87,10 @@ func _run() -> void:
 	assert(not player.has_sword)
 	player.pick_up_nearest_item()
 	assert(player.has_sword)
+	assert(player.sword_kind == "wood")
+	assert(player.sword_durability == 5 and player.sword_max_durability == 5)
+	stage.get_node("HUD")._process(0.0)
+	assert(weapon_status.visible)
 	var held_test_rock := stage.get_node("RockThree")
 	held_test_rock.global_position = player.global_position
 	await physics_frame
@@ -94,6 +104,7 @@ func _run() -> void:
 	assert(not player.get_node("Body/SwordPivot").visible)
 	assert(dropped_sword.gravity_scale > 0.0)
 	assert(dropped_sword.collision_mask & 1 != 0)
+	assert(dropped_sword.weapon_kind == "wood" and dropped_sword.durability == 5)
 	var dropped_start_y := dropped_sword.global_position.y
 	for _frame in range(90):
 		await physics_frame
@@ -105,6 +116,7 @@ func _run() -> void:
 	assert(not player.has_sword)
 	assert(dropped_sword.collect_by(player))
 	assert(player.has_sword)
+	assert(player.sword_kind == "wood" and player.sword_durability == 5)
 	assert(player.get_node("Body/SwordPivot").visible)
 	var barrel := stage.get_node("BreakableBarrel")
 	assert(barrel.collision_layer & 2 != 0, "Barrels must occupy the obstacle layer used by crabs")
@@ -136,6 +148,7 @@ func _run() -> void:
 		await physics_frame
 	assert(barrel._broken)
 	assert(stage.get_child_count() >= child_count_before_barrel + 7)
+	assert(player.sword_durability == 4, "Breaking one barrel must use one durability")
 
 	var rescue_barrel := (load("res://scenes/props/breakable_barrel.tscn") as PackedScene).instantiate()
 	rescue_barrel.position = player.position + Vector2(150, 0)
@@ -169,6 +182,7 @@ func _run() -> void:
 	for _frame in range(6):
 		await physics_frame
 	assert(sword_target._defeated)
+	assert(player.sword_durability == 3, "Hitting one enemy must use one durability")
 	for _frame in range(18):
 		await physics_frame
 
@@ -176,12 +190,28 @@ func _run() -> void:
 	stage.add_child(sword_bubble)
 	sword_bubble.global_position = player.global_position + Vector2(52, -12)
 	await physics_frame
-	player.attack_with_sword()
+	player._is_attacking = true
+	player._sword_hit_targets.clear()
+	player._try_sword_hit(sword_bubble)
+	player._is_attacking = false
 	for _frame in range(10):
 		await physics_frame
 	assert(not is_instance_valid(sword_bubble) or sword_bubble.is_queued_for_deletion())
-	for _frame in range(14):
-		await physics_frame
+	assert(player.sword_durability == 3, "Popping a bubble must not use sword durability")
+
+	var final_durability_target := (load("res://scenes/enemies/crab.tscn") as PackedScene).instantiate()
+	final_durability_target.move_speed = 0.0
+	final_durability_target.global_position = player.global_position + Vector2(50, 0)
+	stage.add_child(final_durability_target)
+	player.sword_durability = 1
+	player._is_attacking = true
+	player._sword_hit_targets.clear()
+	player._try_sword_hit(final_durability_target)
+	assert(final_durability_target._defeated)
+	assert(not player.has_sword and player.sword_durability == 0)
+	assert(not player.get_node("Body/SwordPivot").visible)
+	stage.get_node("HUD")._process(0.0)
+	assert(not weapon_status.visible)
 
 	var crab := stage.get_node_or_null("CrabOne")
 	if not is_instance_valid(crab):
@@ -219,6 +249,10 @@ func _run() -> void:
 	assert(paused and end_shop.opened)
 	for button in end_shop.find_children("*", "Button", true, false):
 		assert(button.text.is_empty(), "End shop must communicate with icons, not button text")
+	assert(end_shop.cards[0].get_node("Description").text == "STONE SWORD · 15 HITS")
+	assert(end_shop.cards[1].get_node("Description").text == "RESTORE 1 LIFE")
+	assert(end_shop.cards[2].get_node("Description").text == "PERMANENT +1 MAX LIFE")
+	assert(end_shop.find_child("NextLabel", true, false).text == "NEXT")
 	end_shop.continue_run()
 	for _frame in range(5):
 		await process_frame

@@ -119,8 +119,7 @@ func _build() -> void:
 		var bubbles := instance_at("res://scenes/effects/ambient_bubbles.tscn", "AmbientBubbles%d" % index, Vector2(base, 648))
 		bubbles.area_size = Vector2(3072, 648)
 		bubbles.bubble_count = 32
-		label_at(stage, "Zone%d" % index, ["01  CORAL STEPS", "02  BUBBLE RIFTS", "03  REEF CROSSROADS", "04  SUNKEN RUINS", "05  LAST CROSSING"][index], Vector2(base + 140, 430), 22)
-		instance_at("res://scenes/items/stone_sword_pickup.tscn", "Sword%d" % index, Vector2(base + 270, 540))
+		instance_at("res://scenes/items/wood_sword_pickup.tscn", "Sword%d" % index, Vector2(base + 270, 540))
 		instance_at("res://scenes/rock.tscn", "SupplyRock%d" % index, Vector2(base + 400, 540))
 	_add_holes()
 	_add_precision_gap()
@@ -130,7 +129,6 @@ func _build() -> void:
 	_add_decorations()
 	var conch := instance_at("res://scenes/props/conch_exit.tscn", "ConchExit", Vector2(15160, 561))
 	conch.set_script(load("res://scripts/stage_2_exit.gd"))
-	label_at(stage, "ExitSign", "CORAL SANCTUARY →", Vector2(14800, 435), 22)
 	_add_completion()
 	var packed := PackedScene.new()
 	assert(packed.pack(stage) == OK)
@@ -189,7 +187,6 @@ func _add_precision_gap() -> void:
 	kill_shape.shape = RectangleShape2D.new()
 	kill_shape.shape.size = Vector2(gap_width, 120)
 	add_owned(chasm, kill_shape)
-	label_at(stage, "PrecisionWarning", "PRECISION CHASM  •  CONTROL EACH LANDING", Vector2(PRECISION_GAP_START * 32 - 290, 405), 17)
 	for index in range(PRECISION_STONES.size()):
 		var stone: Array = PRECISION_STONES[index]
 		var center_x := float(stone[0] + stone[1] + 1) * 16.0
@@ -252,7 +249,6 @@ func _add_checkpoints() -> void:
 		lamp.polygon = PackedVector2Array([Vector2(-20, 0), Vector2(20, 0), Vector2(12, -14), Vector2(4, -14), Vector2(4, -76), Vector2(18, -92), Vector2(0, -114), Vector2(-18, -92), Vector2(-4, -76), Vector2(-4, -14), Vector2(-12, -14)])
 		lamp.color = Color("e6e6a2")
 		add_owned(checkpoint, lamp)
-		label_at(checkpoint, "Label", "CHECKPOINT", Vector2(-48, -145), 15)
 
 
 func _add_decorations() -> void:

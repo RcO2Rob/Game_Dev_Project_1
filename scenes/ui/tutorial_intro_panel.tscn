@@ -68,7 +68,7 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(0.84, 0.96, 1, 1)
 theme_override_font_sizes/font_size = 17
-text = "Learn each underwater mechanic here.\nLater levels will combine them in harder ways."
+text = "Learn each underwater mechanic here.\nLater levels will combine them in harder ways.\nWATCH OUT: Sea creatures and large bubbles are dangerous.\nA large bubble can trap you and carry you away."
 horizontal_alignment = 1
 
 [node name="Controls" type="Label" parent="Content/Panel/Margin/VBox"]

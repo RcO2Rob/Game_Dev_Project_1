@@ -16,7 +16,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/seaweed_cluster.tscn" id="21_seaweed"]
 [ext_resource type="PackedScene" path="res://scenes/props/conch_exit.tscn" id="22_conch"]
 [ext_resource type="PackedScene" path="res://scenes/effects/ambient_bubbles.tscn" id="23_bubbles"]
-[ext_resource type="PackedScene" path="res://scenes/items/stone_sword_pickup.tscn" id="24_sword"]
+[ext_resource type="PackedScene" path="res://scenes/items/wood_sword_pickup.tscn" id="24_sword"]
 [ext_resource type="PackedScene" path="res://scenes/props/breakable_barrel.tscn" id="25_barrel"]
 [ext_resource type="PackedScene" path="res://scenes/ui/tutorial_intro_panel.tscn" id="27_intro"]
 
@@ -157,6 +157,7 @@ scale = Vector2(0.58, 0.58)
 
 [node name="ConchExit" parent="." unique_id=755567668 instance=ExtResource("22_conch")]
 position = Vector2(2215, 558)
+show_entry_hint = true
 
 [node name="TutorialIntro" parent="." unique_id=333440338 instance=ExtResource("27_intro")]
 

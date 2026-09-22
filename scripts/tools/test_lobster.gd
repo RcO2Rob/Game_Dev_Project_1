@@ -70,10 +70,11 @@ func run() -> void:
 	assert(not player.get_node("Body/SwordPivot").visible)
 	var lost_sword: RigidBody2D
 	for child in arena.get_children():
-		if child is RigidBody2D and child.name.begins_with("StoneSwordPickup"):
+		if child is RigidBody2D and child.is_in_group("pickup_weapon") and child._collected:
 			lost_sword = child
 			break
 	assert(is_instance_valid(lost_sword))
+	assert(lost_sword.weapon_kind == "wood" and lost_sword.durability == 5)
 	assert(lost_sword._collected)
 	assert(lost_sword.collision_layer == 0)
 	lobster._captured_in_bubble = true

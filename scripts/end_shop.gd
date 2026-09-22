@@ -40,7 +40,7 @@ func purchase(kind: String) -> bool:
 		_flash(cards[kinds.find(kind)], false)
 		return false
 	if kind == "sword":
-		if buyer.has_sword or not buyer.equip_sword():
+		if buyer.has_sword or not buyer.equip_sword("stone"):
 			return false
 	elif kind == "heal":
 		if buyer.current_health >= buyer.max_health:
@@ -97,6 +97,23 @@ func _card(kind: String, price: int) -> Button:
 	icon.configure(kind, price)
 	button.add_child(icon)
 	icon.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var descriptions := {
+		"sword": "STONE SWORD · 15 HITS",
+		"heal": "RESTORE 1 LIFE",
+		"heart_up": "PERMANENT +1 MAX LIFE",
+	}
+	var description := Label.new()
+	description.name = "Description"
+	description.text = descriptions[kind]
+	description.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	description.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	description.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	description.add_theme_color_override("font_color", Color("eafff7"))
+	description.add_theme_font_size_override("font_size", 13)
+	button.add_child(description)
+	description.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	description.offset_top = -34
+	description.offset_bottom = -8
 	button.pressed.connect(purchase.bind("heart" if kind == "heart_up" else kind))
 	cards.append(button)
 	return button
@@ -144,5 +161,16 @@ func _build() -> void:
 	continue_icon.configure("continue")
 	continue_button.add_child(continue_icon)
 	continue_icon.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var next_label := Label.new()
+	next_label.name = "NextLabel"
+	next_label.text = "NEXT"
+	next_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	next_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	next_label.add_theme_color_override("font_color", Color("eafff7"))
+	next_label.add_theme_font_size_override("font_size", 22)
+	continue_button.add_child(next_label)
+	next_label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	next_label.offset_top = -38
+	next_label.offset_bottom = -8
 	continue_button.pressed.connect(continue_run)
 	column.add_child(continue_button)

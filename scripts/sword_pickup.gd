@@ -1,7 +1,14 @@
 extends RigidBody2D
 
+@export_enum("wood", "stone") var weapon_kind := "wood"
+@export_range(1, 15, 1) var durability := 5
+
 var _pickup_delay := 0.0
 var _collected := false
+
+
+func _ready() -> void:
+	_apply_weapon_visual()
 
 
 func _physics_process(delta: float) -> void:
@@ -15,6 +22,30 @@ func set_pickup_delay(duration: float) -> void:
 func launch(launch_velocity: Vector2) -> void:
 	linear_velocity = launch_velocity
 	angular_velocity = 0.0
+
+
+func set_weapon_state(kind: String, remaining_durability: int) -> void:
+	weapon_kind = "stone" if kind == "stone" else "wood"
+	var maximum := 15 if weapon_kind == "stone" else 5
+	durability = clampi(remaining_durability, 1, maximum)
+	_apply_weapon_visual()
+
+
+func _apply_weapon_visual() -> void:
+	if not has_node("Blade"):
+		return
+	if weapon_kind == "wood":
+		$Blade.color = Color("a96832")
+		$BladeEdge.default_color = Color("e6b875")
+		$Guard.color = Color("68401f")
+		$Handle.color = Color("3f2819")
+		$Pommel.color = Color("5a371f")
+	else:
+		$Blade.color = Color(0.58, 0.66, 0.69, 1)
+		$BladeEdge.default_color = Color(0.85, 0.94, 0.95, 0.9)
+		$Guard.color = Color(0.2, 0.27, 0.29, 1)
+		$Handle.color = Color(0.39, 0.22, 0.12, 1)
+		$Pommel.color = Color(0.22, 0.29, 0.31, 1)
 
 
 func knock_away_and_disappear(launch_velocity: Vector2) -> void:
@@ -38,7 +69,7 @@ func knock_away_and_disappear(launch_velocity: Vector2) -> void:
 func collect_by(body: Node) -> bool:
 	if _collected or _pickup_delay > 0.0 or not body.has_method("equip_sword"):
 		return false
-	if not body.equip_sword():
+	if not body.equip_sword(weapon_kind, durability):
 		return false
 	_collected = true
 	collision_layer = 0

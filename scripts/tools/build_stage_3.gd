@@ -193,7 +193,7 @@ func _add_collectibles() -> void:
 		item("res://scenes/props/breakable_barrel.tscn", "Barrel%d" % x, Vector2(x * 32 + 16, row(x) * 32 - 24))
 	# A lost weapon never makes progress impossible: rocks and stomps remain useful.
 	for x in [113, 338, 563]:
-		item("res://scenes/items/stone_sword_pickup.tscn", "SpareSword%d" % x, Vector2(x * 32, row(x) * 32 - 25))
+		item("res://scenes/items/wood_sword_pickup.tscn", "SpareSword%d" % x, Vector2(x * 32, row(x) * 32 - 25))
 
 func _add_enemies() -> void:
 	for x in [27, 66, 83, 140, 161, 172, 209, 267, 278, 311, 359, 390, 432, 495, 542, 583, 621, 650]:

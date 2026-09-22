@@ -6,7 +6,7 @@
 [ext_resource type="TileSet" uid="uid://b63mch20i84t7" path="res://assets/tilesets/underwater_tileset.tres" id="4_dxc4c"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="5_w5kbk"]
 [ext_resource type="PackedScene" path="res://scenes/effects/ambient_bubbles.tscn" id="7_2o6m7"]
-[ext_resource type="PackedScene" path="res://scenes/items/stone_sword_pickup.tscn" id="9_en0oc"]
+[ext_resource type="PackedScene" path="res://scenes/items/wood_sword_pickup.tscn" id="9_en0oc"]
 [ext_resource type="PackedScene" path="res://scenes/rock.tscn" id="11_goy5p"]
 [ext_resource type="PackedScene" path="res://scenes/hazards/seabed_hole.tscn" id="13_jvv36"]
 [ext_resource type="PackedScene" path="res://scenes/items/coin.tscn" id="15_s27c6"]
@@ -94,15 +94,6 @@ position = Vector2(0, 648)
 area_size = Vector2(3072, 648)
 bubble_count = 32
 
-[node name="Zone0" type="Label" parent="." unique_id=1154849325]
-offset_left = 140.0
-offset_top = 430.0
-offset_right = 140.0
-offset_bottom = 430.0
-theme_override_colors/font_color = Color(0.77254903, 0.9647059, 0.9254902, 1)
-theme_override_font_sizes/font_size = 22
-text = "01  CORAL STEPS"
-
 [node name="Sword0" parent="." unique_id=1665088396 instance=ExtResource("9_en0oc")]
 position = Vector2(270, 540)
 
@@ -113,15 +104,6 @@ position = Vector2(400, 540)
 position = Vector2(3072, 648)
 area_size = Vector2(3072, 648)
 bubble_count = 32
-
-[node name="Zone1" type="Label" parent="." unique_id=1309339617]
-offset_left = 3212.0
-offset_top = 430.0
-offset_right = 3212.0
-offset_bottom = 430.0
-theme_override_colors/font_color = Color(0.77254903, 0.9647059, 0.9254902, 1)
-theme_override_font_sizes/font_size = 22
-text = "02  BUBBLE RIFTS"
 
 [node name="Sword1" parent="." unique_id=1100889415 instance=ExtResource("9_en0oc")]
 position = Vector2(3699, 202)
@@ -134,15 +116,6 @@ position = Vector2(6144, 648)
 area_size = Vector2(3072, 648)
 bubble_count = 32
 
-[node name="Zone2" type="Label" parent="." unique_id=1941755034]
-offset_left = 6284.0
-offset_top = 430.0
-offset_right = 6284.0
-offset_bottom = 430.0
-theme_override_colors/font_color = Color(0.77254903, 0.9647059, 0.9254902, 1)
-theme_override_font_sizes/font_size = 22
-text = "03  REEF CROSSROADS"
-
 [node name="SupplyRock2" parent="." unique_id=557054694 instance=ExtResource("11_goy5p")]
 position = Vector2(7353, 453)
 
@@ -150,15 +123,6 @@ position = Vector2(7353, 453)
 position = Vector2(9216, 648)
 area_size = Vector2(3072, 648)
 bubble_count = 32
-
-[node name="Zone3" type="Label" parent="." unique_id=2144010215]
-offset_left = 9356.0
-offset_top = 430.0
-offset_right = 9356.0
-offset_bottom = 430.0
-theme_override_colors/font_color = Color(0.77254903, 0.9647059, 0.9254902, 1)
-theme_override_font_sizes/font_size = 22
-text = "04  SUNKEN RUINS"
 
 [node name="Sword3" parent="." unique_id=575704810 instance=ExtResource("9_en0oc")]
 position = Vector2(9486, 540)
@@ -170,15 +134,6 @@ position = Vector2(9616, 540)
 position = Vector2(12288, 648)
 area_size = Vector2(3072, 648)
 bubble_count = 32
-
-[node name="Zone4" type="Label" parent="." unique_id=145590738]
-offset_left = 12428.0
-offset_top = 430.0
-offset_right = 12428.0
-offset_bottom = 430.0
-theme_override_colors/font_color = Color(0.77254903, 0.9647059, 0.9254902, 1)
-theme_override_font_sizes/font_size = 22
-text = "05  LAST CROSSING"
 
 [node name="Sword4" parent="." unique_id=205140722 instance=ExtResource("9_en0oc")]
 position = Vector2(12276, 561)
@@ -419,15 +374,6 @@ polygon = PackedVector2Array(-352, 568, 352, 568, 352, 648, -352, 648)
 [node name="KillShape" type="CollisionShape2D" parent="PrecisionChasm" unique_id=255572460]
 position = Vector2(0, 676)
 shape = SubResource("RectangleShape2D_1or3x")
-
-[node name="PrecisionWarning" type="Label" parent="." unique_id=1623871680]
-offset_left = 12446.0
-offset_top = 405.0
-offset_right = 12446.0
-offset_bottom = 405.0
-theme_override_colors/font_color = Color(0.77254903, 0.9647059, 0.9254902, 1)
-theme_override_font_sizes/font_size = 17
-text = "PRECISION CHASM  •  CONTROL EACH LANDING"
 
 [node name="PrecisionCoin1" parent="." unique_id=2007780366 instance=ExtResource("15_s27c6")]
 position = Vector2(12815, 524)
@@ -873,15 +819,6 @@ position = Vector2(0, -1)
 color = Color(0.9019608, 0.9019608, 0.63529414, 1)
 polygon = PackedVector2Array(-20, 0, 20, 0, 12, -14, 4, -14, 4, -76, 18, -92, 0, -114, -18, -92, -4, -76, -4, -14, -12, -14)
 
-[node name="Label" type="Label" parent="Checkpoints/Beacon1" unique_id=754443457]
-offset_left = -48.0
-offset_top = -145.0
-offset_right = -48.0
-offset_bottom = -145.0
-theme_override_colors/font_color = Color(0.77254903, 0.9647059, 0.9254902, 1)
-theme_override_font_sizes/font_size = 15
-text = "CHECKPOINT"
-
 [node name="Beacon2" type="Area2D" parent="Checkpoints" unique_id=19749822]
 position = Vector2(6224, 576)
 collision_layer = 0
@@ -893,15 +830,6 @@ shape = SubResource("RectangleShape2D_iuuix")
 [node name="Lamp" type="Polygon2D" parent="Checkpoints/Beacon2" unique_id=2002033697]
 color = Color(0.9019608, 0.9019608, 0.63529414, 1)
 polygon = PackedVector2Array(-20, 0, 20, 0, 12, -14, 4, -14, 4, -76, 18, -92, 0, -114, -18, -92, -4, -76, -4, -14, -12, -14)
-
-[node name="Label" type="Label" parent="Checkpoints/Beacon2" unique_id=362014966]
-offset_left = -48.0
-offset_top = -145.0
-offset_right = -48.0
-offset_bottom = -145.0
-theme_override_colors/font_color = Color(0.77254903, 0.9647059, 0.9254902, 1)
-theme_override_font_sizes/font_size = 15
-text = "CHECKPOINT"
 
 [node name="Beacon3" type="Area2D" parent="Checkpoints" unique_id=662766709]
 position = Vector2(9296, 576)
@@ -915,15 +843,6 @@ shape = SubResource("RectangleShape2D_ptry4")
 color = Color(0.9019608, 0.9019608, 0.63529414, 1)
 polygon = PackedVector2Array(-20, 0, 20, 0, 12, -14, 4, -14, 4, -76, 18, -92, 0, -114, -18, -92, -4, -76, -4, -14, -12, -14)
 
-[node name="Label" type="Label" parent="Checkpoints/Beacon3" unique_id=1322076061]
-offset_left = -48.0
-offset_top = -145.0
-offset_right = -48.0
-offset_bottom = -145.0
-theme_override_colors/font_color = Color(0.77254903, 0.9647059, 0.9254902, 1)
-theme_override_font_sizes/font_size = 15
-text = "CHECKPOINT"
-
 [node name="Beacon4" type="Area2D" parent="Checkpoints" unique_id=624501306]
 position = Vector2(12368, 576)
 collision_layer = 0
@@ -935,15 +854,6 @@ shape = SubResource("RectangleShape2D_m1clj")
 [node name="Lamp" type="Polygon2D" parent="Checkpoints/Beacon4" unique_id=2046018178]
 color = Color(0.9019608, 0.9019608, 0.63529414, 1)
 polygon = PackedVector2Array(-20, 0, 20, 0, 12, -14, 4, -14, 4, -76, 18, -92, 0, -114, -18, -92, -4, -76, -4, -14, -12, -14)
-
-[node name="Label" type="Label" parent="Checkpoints/Beacon4" unique_id=357706253]
-offset_left = -48.0
-offset_top = -145.0
-offset_right = -48.0
-offset_bottom = -145.0
-theme_override_colors/font_color = Color(0.77254903, 0.9647059, 0.9254902, 1)
-theme_override_font_sizes/font_size = 15
-text = "CHECKPOINT"
 
 [node name="Decoration5" parent="." unique_id=693641778 instance=ExtResource("28_7r8pm")]
 z_index = -1
@@ -1123,15 +1033,6 @@ scale = Vector2(0.5, 0.5)
 [node name="ConchExit" parent="." unique_id=1141050299 instance=ExtResource("31_bpifc")]
 position = Vector2(15282, 561)
 script = ExtResource("32_et7ct")
-
-[node name="ExitSign" type="Label" parent="." unique_id=901664396]
-offset_left = 14800.0
-offset_top = 435.0
-offset_right = 14800.0
-offset_bottom = 435.0
-theme_override_colors/font_color = Color(0.77254903, 0.9647059, 0.9254902, 1)
-theme_override_font_sizes/font_size = 22
-text = "CORAL SANCTUARY →"
 
 [node name="Completion" type="CanvasLayer" parent="." unique_id=1382204768]
 layer = 20
