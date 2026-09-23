@@ -7,6 +7,7 @@ var coins := 0
 var diamonds := 0
 var health := 3
 var max_health := 3
+var coins_per_diamond := 30
 
 func configure(new_kind: String, new_price := 0, new_coin_price := 0) -> void:
 	kind = new_kind
@@ -27,6 +28,9 @@ func _draw() -> void:
 		_draw_balance()
 	elif kind == "sword":
 		_draw_sword(c + Vector2(0, -30), 1.15)
+		_draw_price(c + Vector2(0, 30))
+	elif kind == "diamond_sword":
+		_draw_sword(c + Vector2(0, -30), 1.15, true)
 		_draw_price(c + Vector2(0, 30))
 	elif kind == "heal":
 		_draw_heart(c + Vector2(-12, -28), 1.25, true)
@@ -52,7 +56,7 @@ func _draw_balance() -> void:
 	draw_string(font, Vector2(302, 42), "1", HORIZONTAL_ALIGNMENT_LEFT, 18, 18, Color("d9fff7"))
 	_draw_diamond(Vector2(326, 35), 8)
 	draw_string(font, Vector2(340, 42), "=", HORIZONTAL_ALIGNMENT_LEFT, 18, 18, Color("d9fff7"))
-	draw_string(font, Vector2(362, 42), "20", HORIZONTAL_ALIGNMENT_LEFT, 28, 18, Color("d9fff7"))
+	draw_string(font, Vector2(362, 42), str(coins_per_diamond), HORIZONTAL_ALIGNMENT_LEFT, 28, 18, Color("d9fff7"))
 	_draw_coin(Vector2(400, 35), 8)
 	for i in range(max_health):
 		_draw_heart(Vector2(size.x - 145 + i * 28, 28), 0.55, i < health)
@@ -89,11 +93,13 @@ func _draw_heart(center: Vector2, scale_value: float, filled: bool) -> void:
 	draw_colored_polygon(points, color)
 	draw_polyline(PackedVector2Array(Array(points) + [points[0]]), Color("ffd5dc") if filled else Color("6e8790"), 2, true)
 
-func _draw_sword(center: Vector2, scale_value: float) -> void:
-	draw_line(center + Vector2(-28, 22) * scale_value, center + Vector2(23, -27) * scale_value, Color("bcd1d3"), 10 * scale_value, true)
+func _draw_sword(center: Vector2, scale_value: float, diamond_blade := false) -> void:
+	var blade_color := Color("48cbe6") if diamond_blade else Color("bcd1d3")
+	var guard_color := Color("286d99") if diamond_blade else Color("536a6d")
+	draw_line(center + Vector2(-28, 22) * scale_value, center + Vector2(23, -27) * scale_value, blade_color, 10 * scale_value, true)
 	draw_line(center + Vector2(-22, 16) * scale_value, center + Vector2(21, -25) * scale_value, Color("efffff"), 2 * scale_value, true)
-	draw_line(center + Vector2(-31, 3) * scale_value, center + Vector2(-11, 24) * scale_value, Color("536a6d"), 7 * scale_value, true)
-	draw_line(center + Vector2(-34, 25) * scale_value, center + Vector2(-19, 40) * scale_value, Color("76502f"), 8 * scale_value, true)
+	draw_line(center + Vector2(-31, 3) * scale_value, center + Vector2(-11, 24) * scale_value, guard_color, 7 * scale_value, true)
+	draw_line(center + Vector2(-34, 25) * scale_value, center + Vector2(-19, 40) * scale_value, Color("20516e") if diamond_blade else Color("76502f"), 8 * scale_value, true)
 
 func _draw_shell(center: Vector2) -> void:
 	draw_circle(center, 45, Color("f0a449"))

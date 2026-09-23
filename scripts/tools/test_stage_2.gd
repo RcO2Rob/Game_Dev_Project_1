@@ -21,8 +21,11 @@ func run() -> void:
 	assert(stage.get_node("Lobster42") != null)
 	assert(stage.get_node("Lobster470") != null)
 	assert(stage.find_children("Lobster*", "CharacterBody2D", true, false).size() == 8)
-	# Enter each beacon through its real overlap signal, then test death recovery.
-	for beacon in stage.get_node("Checkpoints").get_children():
+	# The first checkpoint was deliberately removed; the other three remain.
+	var checkpoints := stage.get_node("Checkpoints")
+	assert(checkpoints.get_child_count() == 3)
+	assert(checkpoints.get_node_or_null("Beacon1") == null)
+	for beacon in checkpoints.get_children():
 		player.global_position = beacon.position + Vector2(0, -40)
 		player.velocity = Vector2.ZERO
 		for frame in range(4):
@@ -31,15 +34,15 @@ func run() -> void:
 		player.die()
 		assert(player.global_position == beacon.position + Vector2(60, -32))
 		assert(player.current_health == 3)
-	# Earlier beacons cannot accidentally overwrite progress on a return trip.
-	stage._checkpoint_entered(player, stage.get_node("Checkpoints/Beacon1"))
-	assert(stage.checkpoint_x == 12368)
+	# Earlier beacons cannot overwrite the latest checkpoint.
+	stage._checkpoint_entered(player, checkpoints.get_child(0))
+	assert(stage.checkpoint_x == checkpoints.get_child(checkpoints.get_child_count() - 1).position.x)
 	player.global_position = Vector2(13088, 650)
 	player.velocity = Vector2.ZERO
 	for frame in range(4):
 		await physics_frame
-	assert(is_equal_approx(player.global_position.x, 12428.0))
-	assert(player.global_position.y >= 544.0 and player.global_position.y <= 554.0)
+	assert(is_equal_approx(player.global_position.x, player._spawn_position.x))
+	assert(player.global_position.y >= player._spawn_position.y)
 	player.global_position = stage.get_node("ConchExit").global_position + Vector2(0, -41)
 	for frame in range(6):
 		await physics_frame
@@ -52,5 +55,5 @@ func run() -> void:
 	for frame in range(6):
 		await process_frame
 	assert(current_scene.scene_file_path == "res://scenes/stage_3.tscn")
-	print("Stage 2 checkpoint, camera and end-shop transition tests passed")
+	print("Stage 2 spawn, camera and end-shop transition tests passed")
 	quit()

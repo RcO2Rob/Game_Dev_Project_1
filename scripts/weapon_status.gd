@@ -16,7 +16,7 @@ func _draw() -> void:
 	var frame := Rect2(0, 0, 46, 40)
 	draw_rect(frame, Color(0.015, 0.09, 0.14, 0.94), true)
 	draw_rect(frame, Color(0.35, 0.82, 0.88, 0.95), false, 2.0)
-	var blade_color := Color("a96832") if weapon_kind == "wood" else Color("94a8b0")
+	var blade_color := Color("a96832") if weapon_kind == "wood" else (Color("48cbe6") if weapon_kind == "diamond" else Color("94a8b0"))
 	var edge_color := Color("e6b875") if weapon_kind == "wood" else Color("ecffff")
 	draw_line(Vector2(12, 29), Vector2(34, 8), blade_color, 7.0, true)
 	draw_line(Vector2(14, 26), Vector2(33, 8), edge_color, 1.5, true)

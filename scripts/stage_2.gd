@@ -8,8 +8,11 @@ var completed := false
 
 func _ready() -> void:
 	$Player/Camera2D.limit_right = int(WIDTH)
-	for marker in $Checkpoints.get_children():
-		marker.body_entered.connect(_checkpoint_entered.bind(marker))
+	var checkpoints := get_node_or_null("Checkpoints")
+	if checkpoints:
+		for marker in checkpoints.get_children():
+			if marker is Area2D:
+				marker.body_entered.connect(_checkpoint_entered.bind(marker))
 	$PrecisionChasm.body_entered.connect(_chasm_entered)
 	$ConchExit.body_entered.connect(_finish)
 	$Completion/Panel/Retry.text = "Continue to Stage 3"
@@ -28,7 +31,9 @@ func _checkpoint_entered(body: Node2D, marker: Area2D) -> void:
 	checkpoint_x = marker.position.x
 	body._spawn_position = marker.position + Vector2(60, -32)
 	body.current_health = body.max_health
-	marker.get_node("Lamp").modulate = Color(0.45, 1.0, 0.65)
+	var lamp := marker.get_node_or_null("Lamp") as CanvasItem
+	if lamp:
+		lamp.modulate = Color(0.45, 1.0, 0.65)
 	var checkpoint_label := marker.get_node_or_null("Label") as Label
 	if checkpoint_label:
 		checkpoint_label.text = "SAVED"

@@ -2,8 +2,10 @@ extends CharacterBody2D
 
 const WOOD_SWORD_PICKUP_SCENE := preload("res://scenes/items/wood_sword_pickup.tscn")
 const STONE_SWORD_PICKUP_SCENE := preload("res://scenes/items/stone_sword_pickup.tscn")
+const DIAMOND_SWORD_PICKUP_SCENE := preload("res://scenes/items/diamond_sword_pickup.tscn")
 const WOOD_SWORD_DURABILITY := 5
 const STONE_SWORD_DURABILITY := 15
+const DIAMOND_SWORD_DURABILITY := 50
 
 @export_category("Horizontal movement")
 @export var max_horizontal_speed := 210.0
@@ -163,14 +165,22 @@ func _unhandled_input(event: InputEvent) -> void:
 		attack_with_sword()
 
 
-func equip_sword(kind := "wood", durability := -1) -> bool:
-	if has_sword:
+func equip_sword(kind := "wood", durability := -1, replace_wood := false) -> bool:
+	if not ["wood", "stone", "diamond"].has(kind):
 		return false
+	if has_sword:
+		if not replace_wood or sword_kind != "wood":
+			return false
+		_clear_sword_state()
 	if is_instance_valid(_held_rock):
 		_held_rock.drop_from_hand()
 		_held_rock = null
-	sword_kind = "stone" if kind == "stone" else "wood"
-	sword_max_durability = STONE_SWORD_DURABILITY if sword_kind == "stone" else WOOD_SWORD_DURABILITY
+	sword_kind = kind
+	sword_max_durability = {
+		"wood": WOOD_SWORD_DURABILITY,
+		"stone": STONE_SWORD_DURABILITY,
+		"diamond": DIAMOND_SWORD_DURABILITY,
+	}[kind]
 	sword_durability = sword_max_durability if durability < 0 else clampi(durability, 1, sword_max_durability)
 	has_sword = true
 	_apply_sword_visual()
@@ -187,7 +197,7 @@ func drop_sword() -> RigidBody2D:
 	var dropped_kind := sword_kind
 	var dropped_durability := sword_durability
 	_clear_sword_state()
-	var sword_scene: PackedScene = STONE_SWORD_PICKUP_SCENE if dropped_kind == "stone" else WOOD_SWORD_PICKUP_SCENE
+	var sword_scene := _sword_pickup_scene(dropped_kind)
 	var dropped_sword := sword_scene.instantiate() as RigidBody2D
 	dropped_sword.set_weapon_state(dropped_kind, dropped_durability)
 	dropped_sword.position = position + Vector2(_facing * 46.0, -10.0)
@@ -203,7 +213,7 @@ func lose_sword_on_damage() -> RigidBody2D:
 	var lost_kind := sword_kind
 	var lost_durability := sword_durability
 	_clear_sword_state()
-	var sword_scene: PackedScene = STONE_SWORD_PICKUP_SCENE if lost_kind == "stone" else WOOD_SWORD_PICKUP_SCENE
+	var sword_scene := _sword_pickup_scene(lost_kind)
 	var lost_sword := sword_scene.instantiate() as RigidBody2D
 	lost_sword.set_weapon_state(lost_kind, lost_durability)
 	lost_sword.position = position + Vector2(_facing * 30.0, -12.0)
@@ -298,17 +308,30 @@ func _clear_sword_state() -> void:
 	$Body/SwordPivot.rotation = -0.78
 
 
+func _sword_pickup_scene(kind: String) -> PackedScene:
+	if kind == "diamond":
+		return DIAMOND_SWORD_PICKUP_SCENE
+	if kind == "stone":
+		return STONE_SWORD_PICKUP_SCENE
+	return WOOD_SWORD_PICKUP_SCENE
+
+
 func _apply_sword_visual() -> void:
 	if sword_kind == "wood":
 		$Body/SwordPivot/Blade.color = Color("a96832")
 		$Body/SwordPivot/BladeEdge.default_color = Color("e6b875")
 		$Body/SwordPivot/Guard.color = Color("68401f")
 		$Body/SwordPivot/Handle.color = Color("3f2819")
-	else:
+	elif sword_kind == "stone":
 		$Body/SwordPivot/Blade.color = Color(0.58, 0.66, 0.69, 1)
 		$Body/SwordPivot/BladeEdge.default_color = Color(0.88, 0.96, 0.97, 0.9)
 		$Body/SwordPivot/Guard.color = Color(0.2, 0.27, 0.29, 1)
 		$Body/SwordPivot/Handle.color = Color(0.39, 0.22, 0.12, 1)
+	else:
+		$Body/SwordPivot/Blade.color = Color("48cbe6")
+		$Body/SwordPivot/BladeEdge.default_color = Color("e3ffff")
+		$Body/SwordPivot/Guard.color = Color("286d99")
+		$Body/SwordPivot/Handle.color = Color("20516e")
 
 
 func _update_swim_buffer(delta: float) -> void:

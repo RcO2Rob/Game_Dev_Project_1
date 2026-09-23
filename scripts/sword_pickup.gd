@@ -1,7 +1,7 @@
 extends RigidBody2D
 
-@export_enum("wood", "stone") var weapon_kind := "wood"
-@export_range(1, 15, 1) var durability := 5
+@export_enum("wood", "stone", "diamond") var weapon_kind := "wood"
+@export_range(1, 50, 1) var durability := 5
 
 var _pickup_delay := 0.0
 var _collected := false
@@ -25,8 +25,8 @@ func launch(launch_velocity: Vector2) -> void:
 
 
 func set_weapon_state(kind: String, remaining_durability: int) -> void:
-	weapon_kind = "stone" if kind == "stone" else "wood"
-	var maximum := 15 if weapon_kind == "stone" else 5
+	weapon_kind = kind if ["wood", "stone", "diamond"].has(kind) else "wood"
+	var maximum: int = {"wood": 5, "stone": 15, "diamond": 50}[weapon_kind]
 	durability = clampi(remaining_durability, 1, maximum)
 	_apply_weapon_visual()
 
@@ -40,12 +40,18 @@ func _apply_weapon_visual() -> void:
 		$Guard.color = Color("68401f")
 		$Handle.color = Color("3f2819")
 		$Pommel.color = Color("5a371f")
-	else:
+	elif weapon_kind == "stone":
 		$Blade.color = Color(0.58, 0.66, 0.69, 1)
 		$BladeEdge.default_color = Color(0.85, 0.94, 0.95, 0.9)
 		$Guard.color = Color(0.2, 0.27, 0.29, 1)
 		$Handle.color = Color(0.39, 0.22, 0.12, 1)
 		$Pommel.color = Color(0.22, 0.29, 0.31, 1)
+	else:
+		$Blade.color = Color("48cbe6")
+		$BladeEdge.default_color = Color("e3ffff")
+		$Guard.color = Color("286d99")
+		$Handle.color = Color("20516e")
+		$Pommel.color = Color("9cefff")
 
 
 func knock_away_and_disappear(launch_velocity: Vector2) -> void:

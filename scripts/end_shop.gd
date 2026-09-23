@@ -1,7 +1,9 @@
 extends CanvasLayer
 
 const ICON_SCRIPT := preload("res://scripts/shop_icon.gd")
-const COINS_PER_DIAMOND := 20
+const COINS_PER_DIAMOND := 30
+const KINDS := ["sword", "diamond_sword", "heal", "heart"]
+const PRICES := {"sword": 2, "diamond_sword": 6, "heal": 1, "heart": 3}
 var buyer: CharacterBody2D
 var destination := ""
 var finish_callback := Callable()
@@ -33,18 +35,19 @@ func open_shop(player: CharacterBody2D, next_scene := "", callback := Callable()
 func purchase(kind: String) -> bool:
 	if not opened or not is_instance_valid(buyer):
 		return false
-	var kinds := ["sword", "heal", "heart"]
-	if not kinds.has(kind):
+	if not KINDS.has(kind):
 		return false
-	var price: int = {"sword": 2, "heal": 1, "heart": 3}[kind]
-	var coin_price := price * COINS_PER_DIAMOND
-	var can_pay_coins: bool = kind != "heart" and buyer.coin_count >= coin_price
-	var can_pay_diamonds: bool = buyer.diamond_count >= price
-	if not can_pay_coins and not can_pay_diamonds:
-		_flash(cards[kinds.find(kind)], false)
+	var price: int = PRICES[kind]
+	var coin_units: int = 0 if kind == "heart" else mini(price, buyer.coin_count / COINS_PER_DIAMOND)
+	var diamonds_needed: int = price - coin_units
+	if buyer.diamond_count < diamonds_needed:
+		_flash(cards[KINDS.find(kind)], false)
 		return false
 	if kind == "sword":
-		if buyer.has_sword or not buyer.equip_sword("stone"):
+		if not buyer.equip_sword("stone", -1, true):
+			return false
+	elif kind == "diamond_sword":
+		if not buyer.equip_sword("diamond", -1, true):
 			return false
 	elif kind == "heal":
 		if buyer.current_health >= buyer.max_health:
@@ -55,13 +58,10 @@ func purchase(kind: String) -> bool:
 		buyer.current_health += 1
 	else:
 		return false
-	# Coins are spent first so diamonds remain available for the permanent
-	# maximum-health upgrade, which never accepts coins.
-	if can_pay_coins:
-		buyer.coin_count -= coin_price
-	else:
-		buyer.diamond_count -= price
-	_flash(cards[kinds.find(kind)], true)
+	# Spend whole coin equivalents first; the permanent heart uses only diamonds.
+	buyer.coin_count -= coin_units * COINS_PER_DIAMOND
+	buyer.diamond_count -= diamonds_needed
+	_flash(cards[KINDS.find(kind)], true)
 	_refresh()
 	return true
 
@@ -88,9 +88,14 @@ func _hide_shop() -> void:
 
 func _refresh() -> void:
 	balance_icon.set_status(buyer.coin_count, buyer.diamond_count, buyer.current_health, buyer.max_health)
-	cards[0].disabled = buyer.has_sword or (buyer.diamond_count < 2 and buyer.coin_count < 40)
-	cards[1].disabled = buyer.current_health >= buyer.max_health or (buyer.diamond_count < 1 and buyer.coin_count < 20)
-	cards[2].disabled = buyer.max_health >= 5 or buyer.diamond_count < 3
+	var can_replace_sword: bool = not buyer.has_sword or buyer.sword_kind == "wood"
+	cards[0].disabled = not can_replace_sword or not _can_afford(2)
+	cards[1].disabled = not can_replace_sword or not _can_afford(6)
+	cards[2].disabled = buyer.current_health >= buyer.max_health or not _can_afford(1)
+	cards[3].disabled = buyer.max_health >= 5 or buyer.diamond_count < 3
+
+func _can_afford(price: int) -> bool:
+	return buyer.diamond_count + buyer.coin_count / COINS_PER_DIAMOND >= price
 
 func _flash(card: Button, success: bool) -> void:
 	var tween := create_tween()
@@ -99,7 +104,7 @@ func _flash(card: Button, success: bool) -> void:
 
 func _card(kind: String, price: int) -> Button:
 	var button := Button.new()
-	button.custom_minimum_size = Vector2(210, 180)
+	button.custom_minimum_size = Vector2(174, 180)
 	button.text = ""
 	var icon := ICON_SCRIPT.new()
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -108,6 +113,7 @@ func _card(kind: String, price: int) -> Button:
 	icon.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var descriptions := {
 		"sword": "STONE SWORD · 15 HITS",
+		"diamond_sword": "DIAMOND SWORD · 50 HITS",
 		"heal": "RESTORE 1 LIFE",
 		"heart_up": "PERMANENT +1 MAX LIFE",
 	}
@@ -118,7 +124,7 @@ func _card(kind: String, price: int) -> Button:
 	description.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	description.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	description.add_theme_color_override("font_color", Color("eafff7"))
-	description.add_theme_font_size_override("font_size", 13)
+	description.add_theme_font_size_override("font_size", 12)
 	button.add_child(description)
 	description.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	description.offset_top = -34
@@ -153,13 +159,15 @@ func _build() -> void:
 	panel.add_child(column)
 	balance_icon = ICON_SCRIPT.new()
 	balance_icon.kind = "balance"
+	balance_icon.coins_per_diamond = COINS_PER_DIAMOND
 	balance_icon.custom_minimum_size = Vector2(740, 72)
 	column.add_child(balance_icon)
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", 24)
+	row.add_theme_constant_override("separation", 16)
 	column.add_child(row)
 	row.add_child(_card("sword", 2))
+	row.add_child(_card("diamond_sword", 6))
 	row.add_child(_card("heal", 1))
 	row.add_child(_card("heart_up", 3))
 	var continue_button := Button.new()

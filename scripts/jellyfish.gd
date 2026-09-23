@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-@export var can_be_stomped := false
+@export var can_be_stomped := true
 @export var horizontal_range := 45.0
 @export var vertical_range := 52.0
 @export var drift_speed := 1.35
@@ -34,8 +34,7 @@ func hit_by_weapon() -> void:
 
 
 func stomp() -> void:
-	# Jellyfish are hazardous from every direction.
-	pass
+	_defeat(true)
 
 
 func capture_in_bubble() -> bool:
@@ -57,13 +56,16 @@ func release_from_bubble() -> void:
 	_time = 0.0
 
 
-func _defeat() -> void:
+func _defeat(was_stomped := false) -> void:
 	if _defeated:
 		return
 	_defeated = true
 	var audio_manager := get_node_or_null("/root/AudioManager")
 	if audio_manager:
-		audio_manager.play_enemy_hit()
+		if was_stomped:
+			audio_manager.play_enemy_stomp()
+		else:
+			audio_manager.play_enemy_hit()
 	collision_layer = 0
 	collision_mask = 0
 	var tween := create_tween()

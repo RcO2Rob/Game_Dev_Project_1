@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/sword_pickup.gd" id="1_pickup"]
+
+[sub_resource type="RectangleShape2D" id="Pickup_shape"]
+size = Vector2(58, 26)
+
+[node name="DiamondSwordPickup" type="RigidBody2D" groups=["pickup_weapon"]]
+collision_layer = 2
+collision_mask = 1
+mass = 0.65
+gravity_scale = 0.45
+linear_damp = 1.4
+angular_damp = 4.0
+lock_rotation = true
+script = ExtResource("1_pickup")
+weapon_kind = "diamond"
+durability = 50
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Pickup_shape")
+
+[node name="Blade" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-22, -4, 22, -4, 31, 0, 22, 4, -22, 4)
+color = Color(0.282, 0.796, 0.902, 1)
+
+[node name="BladeEdge" type="Line2D" parent="."]
+points = PackedVector2Array(-20, -2, 21, -2, 28, 0)
+width = 1.5
+default_color = Color(0.89, 1, 1, 1)
+
+[node name="Guard" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-24, -10, -18, -10, -18, 10, -24, 10)
+color = Color(0.157, 0.427, 0.6, 1)
+
+[node name="Handle" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-39, -4, -23, -4, -23, 4, -39, 4)
+color = Color(0.125, 0.318, 0.431, 1)
+
+[node name="Pommel" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-43, -7, -37, -7, -37, 7, -43, 7)
+color = Color(0.612, 0.937, 1, 1)

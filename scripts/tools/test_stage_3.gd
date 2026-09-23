@@ -8,7 +8,7 @@ func run() -> void:
 	root.add_child(stage2)
 	current_scene = stage2
 	await process_frame
-	stage2.get_node("Player").coin_count = 60
+	stage2.get_node("Player").coin_count = 90
 	stage2.get_node("Player").diamond_count = 2
 	stage2.get_node("Player").current_health = 2
 	stage2._finish(stage2.get_node("Player"))
@@ -26,31 +26,40 @@ func run() -> void:
 		assert(platform2.position == stopped2, "Buying must pause moving hazards")
 	var stage2_player: CharacterBody2D = stage2.get_node("Player")
 	assert(not end_shop.purchase("heart"), "Permanent health must never accept coins")
-	assert(stage2_player.coin_count == 60 and stage2_player.diamond_count == 2)
+	assert(stage2_player.coin_count == 90 and stage2_player.diamond_count == 2)
 	stage2_player.diamond_count = 15
 	end_shop._refresh()
 	assert(end_shop.purchase("heal"))
-	assert(stage2_player.current_health == 3 and stage2_player.coin_count == 40 and stage2_player.diamond_count == 15)
+	assert(stage2_player.current_health == 3 and stage2_player.coin_count == 60 and stage2_player.diamond_count == 15)
 	assert(not end_shop.purchase("heal"))
 	assert(end_shop.purchase("heart"))
 	assert(end_shop.purchase("heart"))
 	assert(stage2_player.max_health == 5 and stage2_player.current_health == 5 and stage2_player.diamond_count == 9)
 	assert(not end_shop.purchase("heart"))
-	assert(end_shop.purchase("sword"))
-	assert(stage2_player.has_sword and stage2_player.coin_count == 0 and stage2_player.diamond_count == 9)
-	assert(stage2_player.sword_kind == "stone")
-	assert(stage2_player.sword_durability == 15 and stage2_player.sword_max_durability == 15)
-	assert(not end_shop.purchase("sword"))
+	assert(stage2_player.equip_sword("wood"))
+	end_shop._refresh()
+	assert(not end_shop.cards[1].disabled, "A held wooden sword must not block weapon upgrades")
+	assert(end_shop.purchase("diamond_sword"))
+	assert(stage2_player.has_sword and stage2_player.coin_count == 0 and stage2_player.diamond_count == 5)
+	assert(stage2_player.sword_kind == "diamond")
+	assert(stage2_player.sword_durability == 50 and stage2_player.sword_max_durability == 50)
+	assert(not end_shop.purchase("sword") and not end_shop.purchase("diamond_sword"))
 	assert(not end_shop.purchase("bogus"))
 	end_shop.continue_run()
 	for frame in range(5):
 		await process_frame
 	var stage := current_scene
 	assert(stage.scene_file_path == "res://scenes/stage_3.tscn")
+	assert(stage.get_node("BackgroundLayer/UnderwaterBackground").texture.resource_path == "res://assets/art/backgrounds/underwater_background_red_stage3_no_rays.png")
 	var player: CharacterBody2D = stage.get_node("Player")
-	assert(player.coin_count == 0 and player.diamond_count == 9)
+	assert(player.coin_count == 0 and player.diamond_count == 5)
 	assert(player.current_health == 5 and player.max_health == 5 and player.has_sword)
-	assert(player.sword_kind == "stone" and player.sword_durability == 15)
+	assert(player.sword_kind == "diamond" and player.sword_durability == 50)
+	var dropped_diamond_sword: RigidBody2D = player.drop_sword()
+	assert(dropped_diamond_sword.weapon_kind == "diamond" and dropped_diamond_sword.durability == 50)
+	dropped_diamond_sword._pickup_delay = 0.0
+	assert(dropped_diamond_sword.collect_by(player))
+	assert(player.sword_kind == "diamond" and player.sword_durability == 50)
 	assert(root.get_node("RunState").pending.is_empty())
 	assert(player.get_node("Camera2D").limit_right == 21504)
 	assert(stage.get_node("HUD/Panel/Level").text == "LEVEL 3")
