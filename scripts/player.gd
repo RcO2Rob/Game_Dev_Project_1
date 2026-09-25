@@ -1,5 +1,9 @@
 extends CharacterBody2D
 
+const NORMAL_COLLISION_MASK := 15 # Terrain, movable objects, enemies, bubble platforms.
+const VICTORY_WALK_SPEED := 155.0
+const VICTORY_EXIT_CLEARANCE := 80.0
+
 const WOOD_SWORD_PICKUP_SCENE := preload("res://scenes/items/wood_sword_pickup.tscn")
 const STONE_SWORD_PICKUP_SCENE := preload("res://scenes/items/stone_sword_pickup.tscn")
 const DIAMOND_SWORD_PICKUP_SCENE := preload("res://scenes/items/diamond_sword_pickup.tscn")
@@ -43,6 +47,7 @@ var _swim_jumps_remaining := 3
 var _invulnerability_left := 0.0
 var _visual_time := 0.0
 var _is_attacking := false
+var _victory_walk := false
 var _sword_hit_targets: Dictionary = {}
 
 var current_health := 3
@@ -64,6 +69,18 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _victory_walk:
+		velocity.x = VICTORY_WALK_SPEED
+		if global_position.x >= $Camera2D.limit_right - VICTORY_EXIT_CLEARANCE:
+			# Cross the level-boundary wall only during the final walk-off.
+			collision_mask = 0
+			velocity.y = 0.0
+			global_position.x += VICTORY_WALK_SPEED * delta
+		else:
+			velocity.y = minf(velocity.y + sink_gravity * delta, max_fall_speed)
+			move_and_slide()
+		_animate_character(delta)
+		return
 	_animate_character(delta)
 	_update_invulnerability(delta)
 	if _captured_in_bubble:
@@ -78,6 +95,7 @@ func _physics_process(delta: float) -> void:
 	# should count as a stomp when the collision normal confirms a top landing.
 	var was_falling := velocity.y > 0.0
 	move_and_slide()
+	_push_touching_rocks()
 	if is_on_floor():
 		_swim_jumps_remaining = max_swim_jumps
 	_handle_enemy_collisions(was_falling)
@@ -91,7 +109,7 @@ func _physics_process(delta: float) -> void:
 func _animate_character(delta: float) -> void:
 	_visual_time += delta
 	var movement_amount := clampf(absf(velocity.x) / max_horizontal_speed, 0.0, 1.0)
-	var grounded := is_on_floor()
+	var grounded := is_on_floor() or _victory_walk
 	var leg_back_target := 0.0
 	var leg_front_target := 0.0
 	var arm_back_target := 0.16
@@ -151,8 +169,20 @@ func _handle_enemy_collisions(was_falling: bool) -> void:
 		return
 
 
+func _push_touching_rocks() -> void:
+	var direction := Input.get_axis("move_left", "move_right")
+	if is_zero_approx(direction):
+		return
+	for index in get_slide_collision_count():
+		var collision := get_slide_collision(index)
+		var rock := collision.get_collider()
+		if rock is RigidBody2D and rock.is_in_group("pickup_rock") and not rock.freeze:
+			if collision.get_normal().x * direction < -0.5:
+				rock.apply_central_force(Vector2(direction * 110.0, 0.0))
+
+
 func _unhandled_input(event: InputEvent) -> void:
-	if _captured_in_bubble:
+	if _captured_in_bubble or _victory_walk:
 		return
 	if event.is_action_pressed("interact"):
 		if has_sword:
@@ -371,7 +401,7 @@ func _update_invulnerability(delta: float) -> void:
 	_invulnerability_left = maxf(_invulnerability_left - delta, 0.0)
 	modulate.a = 0.45 if int(Time.get_ticks_msec() / 90) % 2 == 0 else 1.0
 	if _invulnerability_left <= 0.0:
-		collision_mask = 13
+		collision_mask = NORMAL_COLLISION_MASK
 		modulate.a = 1.0
 
 
@@ -411,6 +441,7 @@ func throw_rock() -> void:
 
 
 func reset_to_spawn() -> void:
+	_victory_walk = false
 	if is_instance_valid(_held_rock):
 		_held_rock.drop_from_hand()
 		_held_rock = null
@@ -418,7 +449,7 @@ func reset_to_spawn() -> void:
 	_bubble_time_left = 0.0
 	_invulnerability_left = 0.0
 	_swim_jumps_remaining = max_swim_jumps
-	collision_mask = 13
+	collision_mask = NORMAL_COLLISION_MASK
 	modulate.a = 1.0
 	$BubbleShell.visible = false
 	global_position = _spawn_position
@@ -426,7 +457,7 @@ func reset_to_spawn() -> void:
 
 
 func capture_in_bubble() -> void:
-	if _captured_in_bubble:
+	if _captured_in_bubble or _victory_walk:
 		return
 	if is_instance_valid(_held_rock):
 		_held_rock.drop_from_hand()
@@ -447,12 +478,14 @@ func _float_in_bubble(delta: float) -> void:
 
 
 func die() -> void:
+	if _victory_walk:
+		return
 	current_health = max_health
 	reset_to_spawn()
 
 
 func take_damage(amount: int = 1) -> void:
-	if _invulnerability_left > 0.0 or _captured_in_bubble:
+	if _invulnerability_left > 0.0 or _captured_in_bubble or _victory_walk:
 		return
 	lose_sword_on_damage()
 	current_health -= amount
@@ -463,8 +496,23 @@ func take_damage(amount: int = 1) -> void:
 		die()
 		return
 	_invulnerability_left = damage_invulnerability_time
-	collision_mask = 1
+	# Keep bodies solid during the damage grace period; the early return above
+	# already prevents losing another life until invulnerability expires.
+	collision_mask = NORMAL_COLLISION_MASK
 	velocity = Vector2(-_facing * 150.0, -120.0)
+
+
+func begin_victory_walk() -> void:
+	_victory_walk = true
+	_captured_in_bubble = false
+	_invulnerability_left = 0.0
+	_is_attacking = false
+	_facing = 1.0
+	$Body.scale.x = absf($Body.scale.x)
+	$BubbleShell.visible = false
+	modulate.a = 1.0
+	collision_mask = 1
+	velocity = Vector2(VICTORY_WALK_SPEED, 0.0)
 
 
 func add_coin(amount: int = 1) -> void:

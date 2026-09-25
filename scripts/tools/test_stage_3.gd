@@ -64,6 +64,8 @@ func run() -> void:
 	assert(player.get_node("Camera2D").limit_right == 21504)
 	assert(stage.get_node("HUD/Panel/Level").text == "LEVEL 3")
 	assert(stage.get_node_or_null("HUD/Panel/Controls") == null)
+	assert(stage.get_node_or_null("ConchExit") == null)
+	assert(stage.get_node("OceanHeart/Visual/Heart") != null)
 	assert(stage.find_children("Current*", "Area2D", true, false).is_empty())
 	for shop_name in ["DiamondShop1", "DiamondShop2", "DiamondShop3"]:
 		assert(stage.get_node_or_null(shop_name) == null, "In-level shops must be removed from Stage 3")
@@ -107,19 +109,38 @@ func run() -> void:
 	vent._physics_process(0.1)
 	assert(vent.active)
 	vent.phase_offset = original_phase_offset
-	player.position = Vector2(21240, 520)
-	for frame in range(6):
-		await physics_frame
-	assert(stage.completed and end_shop.opened and paused)
-	assert(not stage.get_node("Completion").visible)
-	end_shop.continue_run()
-	for frame in range(4):
+	player.position = stage.get_node("OceanHeart").position
+	for frame in range(8):
 		await process_frame
+		if stage.completed:
+			break
+	assert(stage.completed and not end_shop.opened and not paused)
+	assert(not stage.get_node("OceanHeart").visible)
+	assert(stage.get_node("VictoryBanner").visible)
+	assert(not stage.get_node("Completion").visible)
+	var walk_start_x: float = player.global_position.x
+	Input.action_press("move_left")
+	for frame in range(12):
+		await physics_frame
+	Input.action_release("move_left")
+	assert(player.global_position.x > walk_start_x + 10.0, "Victory walk must ignore player movement input")
+	for frame in range(600):
+		await process_frame
+		if stage.result_shown:
+			break
+	assert(stage.result_shown and paused, "The final result should appear after the player exits right")
+	assert(player.global_position.x >= stage.WIDTH + stage.EXIT_MARGIN)
+	assert(not stage.get_node("VictoryBanner").visible)
 	assert(stage.get_node("Completion").visible)
-	assert(player.process_mode == Node.PROCESS_MODE_DISABLED)
-	print("Stage 3 passed: visual end shop, transfer, transactions, platform riding, checkpoints, vents and finish")
-	stage.queue_free()
-	await process_frame
+	assert("YOU COMPLETED THE ADVENTURE" in stage.get_node("Completion/Panel/Result").text)
+	assert(stage.restart_button.text == "RESTART ADVENTURE")
+	stage.restart_button.pressed.emit()
+	for frame in range(5):
+		await process_frame
+	assert(current_scene.scene_file_path == "res://scenes/stage_1.tscn")
+	assert(not paused and root.get_node("RunState").pending.is_empty())
+	print("Stage 3 passed: visual end shop, transfer, transactions, platform riding, checkpoints, vents, Heart pickup and adventure finish")
+	current_scene.queue_free()
 	await process_frame
 	# Let the audio mixer release in-flight pickup voices before ending the test.
 	for audio in root.get_node("AudioManager").get_children():

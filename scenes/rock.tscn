@@ -2,18 +2,20 @@
 
 [ext_resource type="Script" path="res://scripts/rock.gd" id="1_rock"]
 
-[sub_resource type="CircleShape2D" id="Rock_shape"]
-radius = 17.0
+[sub_resource type="RectangleShape2D" id="Rock_shape"]
+size = Vector2(30, 30)
 
 [sub_resource type="CircleShape2D" id="Enemy_hit_shape"]
 radius = 20.0
 
 [node name="Rock" type="RigidBody2D" groups=["pickup_rock"]]
 collision_layer = 2
-collision_mask = 1
-mass = 0.8
+collision_mask = 5
+continuous_cd = 1
+mass = 0.15
 gravity_scale = 0.35
 linear_damp = 1.5
+lock_rotation = true
 script = ExtResource("1_rock")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

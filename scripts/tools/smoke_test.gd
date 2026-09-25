@@ -10,13 +10,10 @@ func _run() -> void:
 	root.add_child(stage)
 	current_scene = stage
 	await process_frame
-	var tutorial_intro := stage.get_node("TutorialIntro")
-	assert(paused and tutorial_intro.visible)
-	assert("TUTORIAL LEVEL" in tutorial_intro.get_node("Content/Panel/Margin/VBox/Title").text)
-	assert("Sea creatures and large bubbles are dangerous" in tutorial_intro.get_node("Content/Panel/Margin/VBox/Message").text)
-	assert("Water jets hurt when active" in tutorial_intro.get_node("Content/Panel/Margin/VBox/Message").text)
-	tutorial_intro.dismiss()
-	assert(not paused and not tutorial_intro.visible)
+	var tutorial := stage.get_node("InteractiveTutorial")
+	assert(not paused and tutorial.visible)
+	assert(tutorial.get_node("Prompt/Content/Rows/KeyBox/Key").text == "D")
+	assert(tutorial.get_node("Prompt/Content/Rows/Instruction").text == "Move right")
 	assert(InputMap.action_get_events("swim")[0].physical_keycode == KEY_SPACE)
 	assert(stage.get_node("HUD/Panel/Level").text == "LEVEL 1")
 	assert(stage.get_node_or_null("HUD/Panel/Controls") == null)
@@ -60,7 +57,7 @@ func _run() -> void:
 	player.take_damage(2)
 	assert(player.current_health == 3)
 	assert(player.global_position == player._spawn_position)
-	assert(player.collision_mask == 13)
+	assert(player.collision_mask == 15)
 
 	assert(stage.get_node("Coin1") != null)
 	assert(stage.get_node("Diamond1") != null)
@@ -235,13 +232,16 @@ func _run() -> void:
 	assert(not is_instance_valid(impact_rock), "A thrown rock must disappear after hitting an enemy")
 	assert(crab._defeated)
 
+	var bubble_rock := (load("res://scenes/rock.tscn") as PackedScene).instantiate()
+	stage.add_child(bubble_rock)
+	bubble_rock.global_position = Vector2(2500, 250)
 	var bubble := (load("res://scenes/hazards/bubble.tscn") as PackedScene).instantiate()
 	stage.add_child(bubble)
-	bubble.global_position = rock.global_position
+	bubble.global_position = bubble_rock.global_position
 	await process_frame
-	bubble._on_body_entered(rock)
+	bubble._on_body_entered(bubble_rock)
 	await process_frame
-	assert(bubble._payload == rock)
+	assert(bubble._payload == bubble_rock)
 	assert(not bubble.get_node("RidePlatform/CollisionShape2D").disabled)
 
 	stage.get_node("ConchExit")._on_body_entered(player)

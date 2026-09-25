@@ -41,7 +41,7 @@ func throw_from_hand(throw_velocity: Vector2) -> void:
 	reparent(_world_parent)
 	global_position = release_position
 	collision_layer = 2
-	collision_mask = 1
+	collision_mask = 5
 	freeze = false
 	linear_velocity = throw_velocity
 	_is_thrown = throw_velocity.length() > 100.0
@@ -68,7 +68,7 @@ func capture_in_bubble() -> bool:
 func release_from_bubble() -> void:
 	freeze = false
 	collision_layer = 2
-	collision_mask = 1
+	collision_mask = 5
 	linear_velocity = Vector2(0, 25)
 	$EnemyHitbox.set_deferred("monitoring", true)
 

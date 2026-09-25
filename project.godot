@@ -19,6 +19,7 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 AudioManager="*res://scripts/audio_manager.gd"
 RunState="*res://scripts/run_state.gd"
 EndShop="*res://scripts/end_shop.gd"
+HelpOverlay="*res://scenes/ui/help_overlay.tscn"
 
 [display]
 
@@ -56,6 +57,11 @@ interact={
 attack={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":16,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":77,"key_label":0,"unicode":109,"location":0,"echo":false,"script":null)
+]
+}
+help={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":16,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":72,"key_label":0,"unicode":104,"location":0,"echo":false,"script":null)
 ]
 }
 

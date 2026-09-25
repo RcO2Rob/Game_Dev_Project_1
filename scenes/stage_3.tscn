@@ -20,11 +20,22 @@
 [ext_resource type="PackedScene" path="res://scenes/props/seaweed_cluster.tscn" id="32_mt2u5"]
 [ext_resource type="PackedScene" path="res://scenes/props/coral_cluster.tscn" id="34_dg7t5"]
 [ext_resource type="PackedScene" uid="uid://p7vh88xpdu1l" path="res://scenes/props/moving_reef.tscn" id="34_v3n16"]
-[ext_resource type="PackedScene" path="res://scenes/props/conch_exit.tscn" id="35_vp37i"]
-[ext_resource type="Script" uid="uid://c2sdctorhmk7x" path="res://scripts/stage_2_exit.gd" id="36_aixqb"]
+[ext_resource type="PackedScene" path="res://scenes/items/ocean_heart.tscn" id="35_vp37i"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_87q3r"]
 size = Vector2(64, 600)
+
+[sub_resource type="StyleBoxFlat" id="Completion_style"]
+bg_color = Color(0.015, 0.11, 0.19, 0.97)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.42, 0.91, 0.96, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
 
 [node name="Stage3" type="Node2D" unique_id=126191921]
 script = ExtResource("1_3kx0p")
@@ -186,6 +197,7 @@ tile_set = ExtResource("4_xrnvi")
 
 [node name="Player" parent="." unique_id=1421560159 instance=ExtResource("5_n31ud")]
 position = Vector2(120, 540)
+collision_mask = 13
 
 [node name="Ambient0" parent="." unique_id=2012795377 instance=ExtResource("7_wwhod")]
 position = Vector2(0, 648)
@@ -216,15 +228,6 @@ position = Vector2(10752, 648)
 area_size = Vector2(3584, 648)
 bubble_count = 30
 
-[node name="Zone3" type="Label" parent="." unique_id=780278489]
-offset_left = 10872.0
-offset_top = 360.0
-offset_right = 10872.0
-offset_bottom = 360.0
-theme_override_colors/font_color = Color(0.7058824, 0.92941177, 0.90588236, 1)
-theme_override_font_sizes/font_size = 26
-text = "STEAM VAULT"
-
 [node name="Ambient4" parent="." unique_id=949990801 instance=ExtResource("7_wwhod")]
 position = Vector2(14336, 648)
 area_size = Vector2(3584, 648)
@@ -234,15 +237,6 @@ bubble_count = 30
 position = Vector2(17920, 648)
 area_size = Vector2(3584, 648)
 bubble_count = 30
-
-[node name="Zone5" type="Label" parent="." unique_id=2106630555]
-offset_left = 18040.0
-offset_top = 360.0
-offset_right = 18040.0
-offset_bottom = 360.0
-theme_override_colors/font_color = Color(0.7058824, 0.92941177, 0.90588236, 1)
-theme_override_font_sizes/font_size = 26
-text = "HEART OF THE SEA"
 
 [node name="Rift46" parent="." unique_id=204731079 instance=ExtResource("9_5lwsd")]
 position = Vector2(1516, 690)
@@ -322,15 +316,6 @@ max_bubble_delay = 9.5
 [node name="Vent387" parent="." unique_id=1658256218 instance=ExtResource("8_ngeu7")]
 position = Vector2(13753, 492)
 
-[node name="VentHint" type="Label" parent="." unique_id=534179640]
-offset_left = 10800.0
-offset_top = 415.0
-offset_right = 10800.0
-offset_bottom = 415.0
-theme_override_colors/font_color = Color(0.7058824, 0.92941177, 0.90588236, 1)
-theme_override_font_sizes/font_size = 18
-text = "Flashing jets erupt soon. Wait, or swim above them."
-
 [node name="RouteDiamond91" parent="." unique_id=557542148 instance=ExtResource("15_wn8s5")]
 position = Vector2(2928, 538)
 
@@ -389,7 +374,7 @@ position = Vector2(2305, 382)
 position = Vector2(2640, 343)
 
 [node name="Coin87" parent="." unique_id=1536816855 instance=ExtResource("17_pfoa7")]
-position = Vector2(2800, 534)
+position = Vector2(2640, 294)
 
 [node name="Coin101" parent="." unique_id=55762737 instance=ExtResource("17_pfoa7")]
 position = Vector2(3342, 454)
@@ -437,16 +422,16 @@ position = Vector2(6120, 291)
 position = Vector2(5878, 378)
 
 [node name="Coin206" parent="." unique_id=136819256 instance=ExtResource("17_pfoa7")]
-position = Vector2(6608, 438)
+position = Vector2(7048, 370)
 
 [node name="Coin213" parent="." unique_id=897243528 instance=ExtResource("17_pfoa7")]
-position = Vector2(6832, 534)
+position = Vector2(7054, 481)
 
 [node name="Coin220" parent="." unique_id=874398049 instance=ExtResource("17_pfoa7")]
 position = Vector2(7056, 534)
 
 [node name="Coin227" parent="." unique_id=921067645 instance=ExtResource("17_pfoa7")]
-position = Vector2(7280, 534)
+position = Vector2(7055, 427)
 
 [node name="Coin234" parent="." unique_id=1717381370 instance=ExtResource("17_pfoa7")]
 position = Vector2(7899, 492)
@@ -461,10 +446,10 @@ position = Vector2(8686, 257)
 position = Vector2(8740, 236)
 
 [node name="Coin276" parent="." unique_id=1869194467 instance=ExtResource("17_pfoa7")]
-position = Vector2(8848, 438)
+position = Vector2(8894, 444)
 
 [node name="Coin283" parent="." unique_id=1647003152 instance=ExtResource("17_pfoa7")]
-position = Vector2(9072, 534)
+position = Vector2(8951, 441)
 
 [node name="Coin304" parent="." unique_id=628062898 instance=ExtResource("17_pfoa7")]
 position = Vector2(9953, 285)
@@ -1174,38 +1159,71 @@ z_index = -1
 position = Vector2(21088, 576)
 scale = Vector2(0.58, 0.58)
 
-[node name="ConchExit" parent="." unique_id=1686363590 instance=ExtResource("35_vp37i")]
-position = Vector2(21240, 561)
-script = ExtResource("36_aixqb")
+[node name="OceanHeart" parent="." unique_id=1686363590 instance=ExtResource("35_vp37i")]
+position = Vector2(21240, 518)
 
 [node name="FinishSign" type="Label" parent="." unique_id=370445146]
-offset_left = 20800.0
-offset_top = 400.0
-offset_right = 20800.0
-offset_bottom = 400.0
+offset_left = 21100.0
+offset_top = 395.0
+offset_right = 21395.0
+offset_bottom = 429.0
 theme_override_colors/font_color = Color(0.7058824, 0.92941177, 0.90588236, 1)
 theme_override_font_sizes/font_size = 24
-text = "THE HEART OF THE SEA →"
+text = "THE HEART OF THE SEA"
+
+[node name="VictoryBanner" type="CanvasLayer" parent="."]
+layer = 45
+visible = false
+
+[node name="Panel" type="Panel" parent="VictoryBanner"]
+offset_left = 500.0
+offset_top = 24.0
+offset_right = 990.0
+offset_bottom = 112.0
+theme_override_styles/panel = SubResource("Completion_style")
+
+[node name="Message" type="Label" parent="VictoryBanner/Panel"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 474.0
+offset_bottom = 76.0
+theme_override_colors/font_color = Color(0.8, 1, 0.95, 1)
+theme_override_font_sizes/font_size = 23
+text = "CONGRATULATIONS!\nADVENTURE COMPLETE"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Completion" type="CanvasLayer" parent="." unique_id=1374247615]
-layer = 20
+process_mode = 3
+layer = 50
 visible = false
+
+[node name="Dim" type="ColorRect" parent="Completion" unique_id=1279020199]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0, 0.04, 0.08, 0.65)
 
 [node name="Panel" type="Panel" parent="Completion" unique_id=1231126556]
 offset_left = 276.0
 offset_top = 174.0
 offset_right = 876.0
 offset_bottom = 474.0
+theme_override_styles/panel = SubResource("Completion_style")
 
 [node name="Result" type="Label" parent="Completion/Panel" unique_id=936479311]
 layout_mode = 0
 offset_left = 24.0
 offset_top = 24.0
-offset_right = 24.0
-offset_bottom = 24.0
-theme_override_colors/font_color = Color(0.7058824, 0.92941177, 0.90588236, 1)
+offset_right = 576.0
+offset_bottom = 222.0
+theme_override_colors/font_color = Color(0.8, 1, 0.95, 1)
 theme_override_font_sizes/font_size = 23
-text = "COMPLETE"
+text = "CONGRATULATIONS!"
+horizontal_alignment = 1
 
 [node name="Replay" type="Button" parent="Completion/Panel" unique_id=796032618]
 layout_mode = 0
@@ -1213,7 +1231,7 @@ offset_left = 150.0
 offset_top = 238.0
 offset_right = 450.0
 offset_bottom = 282.0
-text = "Replay Stage 3 (fresh run)"
+text = "RESTART ADVENTURE"
 
 [node name="MovingReef245" parent="." unique_id=1311913205 instance=ExtResource("34_v3n16")]
 position = Vector2(7856, 530)
