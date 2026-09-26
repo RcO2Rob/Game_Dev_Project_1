@@ -10,6 +10,5 @@ Open `project.godot` in Godot and run the project. Use A/D to move, Space to swi
 
 The final GitHub release will include builds for:
 
-- Windows x86
 - macOS
-- Linux x86
+
